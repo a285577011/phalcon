@@ -1,0 +1,66 @@
+<?php $this->partial("common/header"); ?>
+		
+		<div class="main_box">
+			<?php $this->partial("common/headernav"); ?>
+			<div class="right main">
+				<div class="com_tab_box clearfix">
+					<ul class="left">
+						<li><a href="<?php echo $this->url->get('custompage/custompagestyle')?>">添加展示页模板</a></li>
+						<li>|<a href="<?php echo $this->url->get('custompage/templatelist')?>">展示页模板列表</a></li>
+						<li >|<a href="<?php echo $this->url->get('custompage/addshowpage')?>">添加展示页域名</a></li>
+						<li>|<a href="<?php echo $this->url->get('custompage/index')?>">展示页域名列表</a></li>
+					</ul>
+				</div>
+				<div class="container">
+					<div class="pattern_box border_gray">
+						<ul class="clearfix">
+						<?php
+						if($list):
+						foreach ($list AS $v):
+						?>
+						<li>
+								<a href="javascript:void(0);"><img src="/upload/images/template/system<?php echo $v->TemplateId.'.jpg'?>" onclick="shownext(<?php echo $v->TemplateId?>)"/><i></i> </a>
+								<p><a href="<?php echo $this->url->get('custompage/pageview').'?templateid='.$v->TemplateId;?>" target="_blank"><?php echo $v->TemplateName; ?></a></p>
+							</li>
+							<?php endforeach;else:?>
+						<li>
+							<div>暂无模板信息</div>
+						</li>
+						<?php endif;?>
+						</ul>
+					</div>
+					<script>
+						$(".pattern_box li img").click(function(){
+							$(this).parent().parent().addClass("active").siblings().removeClass("active");
+						})
+						function shownext(id)
+						{
+							$("#tpid").val(id);
+						}
+							
+						function nextstep()
+						{
+							var tid = $("#tpid").val();
+							if(tid)
+							{
+								window.location.href = "<?php echo $this->url->get('custompage/addtemplate').'?type=1&templateid='?>"+tid;
+							}
+							else{
+								alert('请选择系统模板');
+								}
+						}
+					</script>
+					<div class="com_btn_box mt20">
+					<input type="hidden" name="tpid" value="" id="tpid" />
+	                	<input type="button" class="refer_btn" onclick="return nextstep();" value="下一步">
+	                	<p class="mt10">一个也不喜欢？<a href="<?php echo $this->url->get('custompage/addtemplate').'?type=2';?>">自定义</a> or <a href="http://www.dnbbs.com">去吐槽</a></p>
+	                </div>
+				</div>
+			</div>
+		</div>
+		<script>
+					var lefturl='<?php echo $this->url->get('custompage/index');?>';
+					var url = '<?php echo $this->url->get('custompage/custompagestyle');?>';
+				navLight(url,lefturl,lefturl);
+</script>
+		<?php $this->partial("common/footer"); ?>

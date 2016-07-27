@@ -1,0 +1,147 @@
+<?php $this->partial("common/header"); ?>
+<script type="text/javascript" src="/js/lunbo.js"></script>
+<link rel="stylesheet" href="/css/lunbo.css" />
+<div class="header flexslider">
+	<ul class="slides">
+		<li><a href="<?php echo $this->url->get('index/topic');?>"><div
+					id="banner1" class="banner"></div></a></li>
+		<li><a href="<?php echo $this->url->get('index/topic2');?>"><div
+					id="banner2" class="banner"></div></a></li>
+	</ul>
+</div>
+<div class="expand_box">
+	<div class="mt30 clearfix">
+		<ul class="expand_list">
+			<li><img src="/images/shopkeeper.png" /><a
+				href="<?php echo $this->url->get('seller/search');?>"
+				class="detail_btn">了解详情</a></li>
+			<li><img src="/images/guest.png" /><a
+				href="<?php echo $this->url->get('agentguests/domainagent');?>"
+				class="detail_btn">了解详情</a></li>
+			<li><img src="/images/display.png" /><a
+				href="<?php echo $this->url->get('custompage/index');?>"
+				class="detail_btn">了解详情</a></li>
+		</ul>
+	</div>
+	<?php if($sellerList || $guestList || $moneyList):?>
+	<div class="mt10">
+		<img src="/images/jessie.jpg" />
+	</div>
+	<div class="mt20" style="padding-bottom: 20px;">
+		<ul class="rank_ul clearfix">
+		<?php if($sellerList):?>
+			<li style="width: 240px;">
+				<h3 class="rank_title">Top5米掌柜</h3>
+				<table class="rank_tab rnc_tab">
+					<colgroup>
+						<col width="50%">
+						<col>
+					</colgroup>
+					<tbody>
+					<?php
+					foreach($sellerList as $seller):
+				?>
+						<tr>
+							<td>ID:<?php echo $seller->EnameId;?></td>
+							<td>出米量：<span><?php echo $seller->Num;?></span></td>
+						</tr>
+					<?php
+					endforeach;
+			?>
+					</tbody>
+
+				</table>
+			</li>
+	<?php endif;?>
+	<?php if($guestList):?>
+			<li style="width: 240px;">
+				<h3 class="rank_title">Top5米客</h3>
+				<table class="rank_tab rnc_tab">
+					<colgroup>
+						<col width="50%">
+						<col>
+					</colgroup>
+					<tbody>
+					<?php
+					foreach($guestList as $guest):
+				?>					
+						<tr>
+							<td>ID:<?php echo $guest->AgentEnameId;?></td>
+							<td>出米量：<span><?php echo $guest->Num;?></span></td>
+						</tr>
+					<?php
+					endforeach;
+				?>						
+					</tbody>
+
+				</table>
+			</li>
+		
+			<?php endif;
+			if($moneyList):
+				?>
+			<li style="width: 400px;">
+				<h3 class="rank_title">金佣榜</h3>
+				<table class="rank_tab mnc_tab">
+					<colgroup>
+						<col width="30%">
+						<col width="40%">
+						<col>
+					</colgroup>
+					<tbody>
+					<?php
+			
+					foreach($moneyList as $money)
+					:
+				?>	
+						<tr>
+							<td>ID:<?php echo $money->AgentEnameId;?></td>
+							<td><span><?php echo $money->DomainName;?></span></td>
+							<td>佣金：<span><?php echo round($money->Income, 2);?>元</span></td>
+						</tr>
+						<?php
+					endforeach;
+			?>	
+					</tbody>
+
+				</table>
+			</li>
+		<?php endif;?>
+		</ul>
+	</div>
+	<?php endif;?>
+	<div class="mt20">
+		<img src="/images/repect.png" />
+	</div>
+
+	<div class="clearfix pb20">
+		<ul class="expand_list">
+			<li><a><img src="/images/adcenter.png" /></a>
+				<p>广告中心</p></li>
+			<li><a><img src="/images/intelligent.png" /></a>
+				<p>智能推广</p></li>
+			<li><a><img src="/images/goldmedal.png" /></a>
+				<p>金牌经纪</p></li>
+		</ul>
+	</div>
+</div>
+<script type="text/javascript">
+		    $(function(){
+			      $('.flexslider').flexslider({
+			        animation: "slide",
+			        start: function(slider){
+			          $('body').removeClass('loading');
+			        }
+			      });
+					$(".menu_list").find('a[href="/"]').closest('li').addClass(
+					'menu_curren').siblings().removeClass('menu_curren');
+
+					$('.rank_tab').each( function(){
+						for(var i=0; i<5; i++) {
+							$(this).find('tr:eq('+ i +') td:eq(0)').addClass('rank_top rank_top'+ (i+1));
+						}
+					});
+			    });
+</script>
+<?php $this->partial("common/footer"); ?>
+

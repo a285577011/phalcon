@@ -1,0 +1,123 @@
+<?php $this->partial("common/header"); ?>	
+<script type="text/javascript" src="/js/zclip/jquery.zclip.js"></script>
+		<div class="main_box">
+<?php $this->partial("common/headernav"); ?>
+			<div class="right main">
+<?php $this->partial("common/agentcommon"); ?>
+<div class="container">
+					
+					<div class="step_box2">
+						<h3>生成推广代码</h3>
+						<div class="pb20 border_gray">
+						<div class="pop_top center mt20"></div>
+							<table class="mt10">
+								<colgroup>
+									<col width="200" />
+									<col />
+								</colgroup>
+								<tbody>
+									<tr>
+										<td class="center"><span style="color: #666f80;font-weight: 700;">预览效果：</span> </td>
+										<td>
+										<div id="jscode" class="center mt10 mb20 pb20 adData">
+										</div>
+										<div class="hot"><p class="hot_tishi">Ctrl+V将代码粘贴到自己的站点，即可形成推广位。</p></div>
+										</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+						<div class="center mt20 pb20">
+							<input class="com_btn copy" type="button" value="复制代码" />
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<script>
+		$(document).ready(function() {
+	        $.ajax({
+	            type: "GET",
+	        url: "<?php echo $this->url->get('Advert/getAdInfo');?>",
+	        data: {'posId':<?php echo $jscode[1];?>},
+	        async:false,
+	        beforeSend : function(){
+	       },
+	                success: function(data){
+	                     if(data){
+	                    	var html=creatHtml(data);
+	                    	$('#jscode').html(html);
+	                        }      
+	                },
+	        error: function(){
+	        	alert("系统繁忙");
+	        }
+	              });
+	    	function creatHtml(text) {
+	    		if (text) {
+	    			var html = text.html.html.head;
+	    			switch (parseInt(text.agenttype)) {
+	    			case 1:
+	    				for ( var i = 0; i < text.data.data.length; i++) {
+	    					var tmp = text.html.html.content.replace('{Name}',
+	    							text.data.data[i].DomainName);
+	    					tmp = tmp.replace('{SimpleDec}',text.data.data[i].SimpleDec);
+	    					tmp = tmp.replace('{Price}',parseFloat(text.data.data[i].Price).toFixed(2));
+	    					tmp = tmp.replace('{FinishTime}',text.data.data[i].FinishTime);
+	    						 if(text.PlatformId==0){
+	    							 if(i==0){
+	    							 tmp=tmp.replace('{First}',' domain-item-first');
+	    							 }
+	    							 else{
+	    								 tmp=tmp.replace('{First}',''); 
+	    							 }
+	    					 }
+	    					html += tmp.replace('{Url}', text.data.url[i]);
+	    				}
+	    				break;
+	    			case 2:
+	    				for ( var i = 0; i < text.data.data.length; i++) {
+	    					var tmp = text.html.html.content.replace('{Name}',
+	    							text.data.data[i].Name);
+	    					tmp = tmp.replace('{Recommands}',text.data.data[i].Recommands);
+	    					 if(text.PlatformId==0){
+	    						 if(i==0){
+	    						 tmp=tmp.replace('{First}',' domain-item-first');
+	    						 }
+	    						 else{
+	    							 tmp=tmp.replace('{First}',''); 
+	    						 }
+	    				 }
+	    					html += tmp.replace('{Url}', text.data.url[i]);
+	    				}
+	    				break;
+	    			}
+	    			html += text.html.html.end;
+	    			return html;
+	    		}
+	    		return '';
+	    	}
+	var jscode =<?php echo json_encode($jscode[0]);?>;
+    $(".copy").zclip({
+		path: "/js/zclip/ZeroClipboard.swf",
+		copy: function(){
+		return jscode;
+		},
+		beforeCopy:function(){/* 按住鼠标时的操作 */
+			$(this).css("color","orange");
+		},
+		afterCopy:function(){/* 复制成功后的操作 */
+			$('.pop_top').html('<span class="success_top">代码复制成功</span>');
+			//$(".copy-tips").fadeOut(3000);
+        }
+	});
+		});
+
+
+</script>
+					<script>
+	var url='<?php echo $this->url->get('Agentguests/autoAgentIndex');?>';
+	var left_url='<?php echo $this->url->get('Agentguests/domainAgent');?>';
+	navLight(url,left_url,left_url);
+</script>
+<?php $this->partial("common/footer"); ?>

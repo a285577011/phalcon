@@ -1,0 +1,5 @@
+msgid "Hello"
+msgstr "Bonjour"
+
+msgid "My name is %name%"
+msgstr "Je m'appelle %name%"

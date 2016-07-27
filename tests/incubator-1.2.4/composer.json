@@ -1,0 +1,25 @@
+{
+    "name": "phalcon/incubator",
+    "type": "library",
+    "description": "Adapters, prototypes or functionality that can be potentially incorporated to the C-framework.",
+    "keywords": ["framework", "phalcon"],
+    "homepage": "http://phalconphp.com",
+    "license": "BSD-3",
+    "version": "1.2.4",
+    "authors": [
+        {
+            "name": "Phalcon Team",
+            "email": "team@phalconphp.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.3.6",
+        "ext-phalcon": "1.2.4"
+    },
+    "autoload": {
+        "psr-0" : {
+            "Phalcon" : "Library/"
+        }
+    }
+    
+}

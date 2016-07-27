@@ -1,0 +1,93 @@
+<?php $this->partial('common/header');?>
+	<script type="text/javascript" src="/js/html5.js" ></script>
+	<script type="text/javascript" src="/js/sectionscroll.js" ></script>
+	<script type="text/javascript" src="/js/jquery.mousewheel.min.js" ></script>
+	<section id="zhuanti1" class="section section1">
+		<article class="sectionWrapper section1Wrapper fadeInDown">
+			<div class="text_box"
+				style="top: 10%; position: absolute; width: 100%;">
+				<div class="center">
+					<img src="/images/topic/zhuanti1_pk1.png">
+				</div>
+				<div class="center">
+					<a href="#zhuanti2"><img src="/images/topic/zhuanti1_pk2.png"></a>
+				</div>
+			</div>
+		</article>
+	</section>
+	<section id="zhuanti2" class="section section2">
+		<article class="sectionWrapper section1Wrapper fadeInDown">
+			<div class="text_box"
+				style="top: 5%; position: absolute; width: 100%;">
+				<div class="center">
+					<img src="/images/topic/zhuanti2_pk1.png">
+				</div>
+				<div class="center">
+					<img src="/images/topic/zhuanti2_pk2.png">
+				</div>
+			</div>
+			<div class="gotop gotop2"></div>
+		</article>
+	</section>
+	<section id="zhuanti3" class="section section3">
+		<article class="sectionWrapper section1Wrapper fadeInDown">
+			<div class="text_box"
+				style="top: 5%; position: absolute; width: 100%;">
+				<div class="center">
+					<img src="/images/topic/zhuanti3_pk1.png">
+				</div>
+				<div class="center">
+					<img src="/images/topic/zhuanti3_pk2.png">
+				</div>
+			</div>
+			<div class="gotop gotop2"></div>
+		</article>
+	</section>
+	<section id="zhuanti4" class="section section4">
+		<article class="sectionWrapper section1Wrapper fadeInDown">
+			<div class="text_box"
+				style="top: 5%; position: absolute; width: 100%;">
+				<div class="center">
+					<img src="/images/topic/zhuanti4_pk1.png">
+				</div>
+				<div class="center">
+					<img src="/images/topic/zhuanti4_pk2.png">
+				</div>
+			</div>
+			<div class="gotop gotop2"></div>
+		</article>
+	</section>
+	<section id="zhuanti5" class="section section5">
+		<article class="sectionWrapper section1Wrapper fadeInDown">
+			<div class="text_box"
+				style="top: 5%; position: absolute; width: 100%;">
+				<div class="center">
+					<img src="/images/topic/zhuanti5_pk.png">
+				</div>
+			</div>
+			<div class="gotop gotop2"></div>
+		</article>
+	</section>
+	<section id="zhuanti6" class="section section6">
+		<article class="sectionWrapper section1Wrapper fadeInDown">
+			<div class="text_box"
+				style="top: 20%; position: absolute; width: 100%;">
+				<div class="center">
+					<img src="/images/topic/zhuanti6_pk.png">
+				</div>
+				<div class="center">
+					<div class="gotobtn" style="width:200px;">
+						<a href="<?php echo $this->url->get('custompage/index');?>"><span>展示页绿色通道</span></a>
+					</div>
+				</div>
+			</div>
+			<div class="gotop"></div>
+		</article>
+	</section>
+<script type="text/javascript">
+	$('.gotop').click(function(){
+		$('body,html').animate({scrollTop:0},1000);
+		return false;
+	});
+</script>
+<?php $this->partial("common/footer");?>

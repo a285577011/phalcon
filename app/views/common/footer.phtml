@@ -1,0 +1,68 @@
+<?php if(isset($checkAgreement)){?>
+
+<script src="/js/modal/bootstrap.js"></script>
+<link href="/css/modal/bootstrap.css" rel="stylesheet" />
+
+								<div id="form-content-checkAgreement" class="modal hide fade in ie"
+					style="display: none;">
+
+					<div class="pop_main" style="width:400px;margin-left:-200px;">
+						<div style="height:40px;line-height:40px;background:#fea500;color:#fdf9c8;width:100%;" class="center">域名联盟欢迎您</div>
+						<div class="center" style="margin:15px;">
+<input type="checkbox" name="checkAgreement" value='1'><a href="<?php echo $this->url->get('faq/detail/53');?>">请您阅读并同意《域名联盟服务协议》</a><br><br>
+<p class="center"><input type="button"  class="com_search_btn ml20 search_btn" value='同意' id="checkAgreement"></p>
+					</div>
+					</div>
+				</div>
+<script>
+$('#form-content-checkAgreement').modal({backdrop: 'static', keyboard: false}); 
+$('#checkAgreement').click(function(){
+	if($('input[name="checkAgreement"]').prop("checked")){
+	     $.ajax({
+	         type: "POST",
+	     url: "<?php echo $this->url->get('User/changeIsAgree');?>",
+	     data: {'status':$('input[name="checkAgreement"]').val()},
+	     beforeSend : function(){
+	    },
+	             success: function(data){
+		             if(data.status){
+		            	 $('#form-content-checkAgreement').modal('hide');
+
+		             }     
+	             },
+	     error: function(){
+	    	 alert("系统繁忙");
+	     }
+	           });
+		}
+	else{
+		alert('请勾选《域名联盟服务协议》');return false;
+		}
+})
+$('#uncheckAgreement').click(function(){
+	 $('#form-content-checkAgreement').modal('hide');
+})
+</script>
+<?php }?>
+<div class="foot section">
+			<div class="footer">
+				<div class="clearfix mt20">
+					<ul class="footer_list left">
+						<li><a href="<?php echo $this->url->get('index/topic');?>" target="_blank">关于我们</a>|</li>
+						<li class="ml10"><a href="<?php echo $this->url->get('faq/index', array('type' => 1));?>" target="_blank">帮助中心</a>|</li>
+						<li class="ml10"><a href="http://www.dnbbs.com/" target="_blank">论坛</a>|</li>
+						<li class="ml10"><a href="http://tm.ename.net/" target="_blank">商标注册</a></li>
+					</ul>
+					<div class="right contact_box mr10">
+						<p>客服电话：400-0044-400 <a target="_blank" href="http://b.qq.com/webc.htm?new=0&sid=4000044400&eid=218808P8z8p8R8P8R8y8K&o=&q=7"><img src="/images/qq.jpg" /> </a> </p>
+					</div>
+				</div>
+				<p class="copyright mt20" style="text-align:center;"><a target="_blank" href="http://www.miibeian.gov.cn">闽ICP备09007125号-2</a> 增值电信业务经营许可证[闽B2-20120071] 文网文[2011]0279-010 <a target="_blank" href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=35020302000019" class="gongwanghao" style="display:inline-block;text-decoration:none;height:20px;line-height:20px;"><img src="http://www.beian.gov.cn/file/ghs.png" style="margin-top:-5px;"/><span style="height:20px;line-height:20px;margin: 0px 0px 0px 5px;">闽公网安备 35020302000019号</span></a>
+				<br />Copyright &copy; 2005-<script type="text/javascript">var date = new Date();var year = date.getFullYear();window.document.write(year);</script> 厦门易名科技股份有限公司 eName Technology Co.,Ltd.</p>
+			</div>
+		</div>
+		<div style="display:none">
+<script src="http://s11.cnzz.com/z_stat.php?id=1256806375&web_id=1256806375" language="JavaScript"></script>
+</div>
+</body>
+</html>

@@ -1,0 +1,30 @@
+<?php $this->partial("common/header"); ?>
+<style>
+	#helpcenterul ol {
+		list-style: decimal;
+	}
+	#helpcenterul ul {
+		list-style: disc;
+	}
+	.helpcenterul img{max-width:100%;}
+	</style>
+<div class="main_box">
+		<?php $this->partial("faq/common"); ?>
+			<div class="right main">
+		<div class="main_title">
+			<span><?php echo isset($detail->Title)? $detail->Title: '';?></span>
+		</div>
+		<div class="container">
+			<div class="mt20 helpcenterul" id="helpcenterul">
+				<?php
+					echo $detail->Content;
+				?>
+			</div>
+		</div>
+	</div>
+</div>
+<script>
+	var url='<?php echo $this->url->get('faq/index',array('type'=>$detail->Type));?>';
+	navLight('javascript:void(0)',url,'javascript:void(0)');
+</script>
+<?php $this->partial("common/footer"); ?>

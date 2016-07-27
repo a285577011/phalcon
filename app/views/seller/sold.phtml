@@ -1,0 +1,86 @@
+<?php $this->partial('common/header');?>
+
+<div class="main_box">
+			<?php $this->partial('common/headernav');?>
+			<div class="right main">
+		<div class="com_tab_box">
+			<ul class="clearfix">
+				<li class="active"><a href="#">发域名</a></li>
+				<li>|<a href="<?php echo $this->url->get('seller/shop');?>">发店铺</a></li>
+			</ul>
+		</div>
+		<div class="container">
+			<?php $this->partial('seller/searchForm');?>
+			<div>
+				<ul class="domain_tab_ul clearfix">
+					<li><a href="<?php echo $this->url->get('seller/search');?>">所有域名</a></li>
+					<li><a href="<?php echo $this->url->get('seller/unseted');?>">未设置</a></li>
+					<li><a href="<?php echo $this->url->get('seller/agented');?>">已设置</a></li>
+					<li><a class="cur" href="#">已售出</a></li>
+				</ul>
+				<table class="domain_table clearfix" width="100%">
+					<colgroup>
+						<col width="2%" />
+						<col />
+						<col width="20%" />
+						<col width="20%" />
+						<col width="25%" />
+					</colgroup>
+					<thead>
+						<tr>
+							<th></th>
+							<th>域名</th>
+							<th>类型</th>
+							<th><a
+								href="<?php echo $this->url->get('seller/sold', array_merge($this->request->getQuery(), array('sort' => 'price-'.$order['priceSort'])));?>">成交价格 <?php echo $order['priceSymbol'];?></a></th>
+							<th><a href="<?php echo $this->url->get('seller/sold', array_merge($this->request->getQuery(), array('sort' => 'percent-'.$order['commissionSort'])));?>">
+									佣金比例 <?php echo $order['commissionSymbol'];?></a>
+							</th>
+						</tr>
+					</thead>
+					<tbody>
+					<?php
+					if(! $isEmpty)
+					{
+						foreach($domainList as $domain)
+						{
+							?>
+						<tr>
+							<td></td>
+							<td><a
+								href="<?php echo $this->url->get('seller/detail/'.$domain->DomainName.'/'.$domain->DomainAgentId);?>"><?php echo $domain->DomainName;if($domain->Topic == 8):echo '&nbsp;<img src="../images/ico_03.png" alt="拍卖会" title="拍卖会" />';endif;?></a>
+							</td>
+							<td><?php if($domain->TransType == 1) echo '竞价'; elseif($domain->TransType == 4) echo '一口价';?></td>
+							<td><?php echo round($domain->Price, 2).'元';?></td>
+							<td><?php echo round($domain->Percent, 2);?>%</td>
+						</tr>
+						<?php
+						}
+					}
+					else
+					{
+						?>
+						<tr>
+							<td colspan="7" style=" text-align: center;">无查询结果</td>
+						</tr>
+					<?php
+							
+					}
+					?>
+							</tbody>
+				</table>
+			</div>
+			<div class="page_box clearfix">
+				<div class="right art_page"><?php echo $pageLink;?></div>
+			</div>
+		</div>
+	</div>
+</div>
+<script type="text/javascript">
+$(function(){
+	navLight("<?php echo $this->url->get('seller/sold');?>", "<?php echo $this->url->get('seller/search');?>", "<?php echo $this->url->get('seller/search');?>");
+});	
+
+</script>
+<?php $this->partial('seller/js');?>
+<?php $this->partial('common/footer');?>

@@ -1,0 +1,117 @@
+package main
+
+import (
+	"bytes"
+	"encoding/json"
+	"fmt"
+	"github.com/achun/tom-toml"
+	"log"
+	"net"
+	"os"
+	"os/exec"
+	"time"
+)
+
+var done chan error = make(chan error)
+
+type Response2 struct {
+	Data []string `json:"content"`
+	Func string   `json:"function"`
+}
+
+func main() { //主函数
+	conf, err := toml.LoadFile("config.toml")
+
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	netListen, err := net.Listen("tcp", conf["socket.ip"].String() + ":" + conf["socket.port"].String())
+	CheckError(err)
+	defer netListen.Close()
+	Log("Waiting for clients")
+	for {
+		conn, err := netListen.Accept()
+		if err != nil {
+			continue
+		}
+		Log(conn.RemoteAddr().String(), " tcp connect success")
+		handleConnection(conn)
+	}
+
+}
+
+func checkCname(data []string) (rs string) { //检查Cname
+	f, err := exec.LookPath("php")
+	if err != nil {
+		fmt.Println("not install php")
+	}
+	conf, err := toml.LoadFile("config.toml")
+
+	if err != nil {
+		fmt.Println(err)
+		return ""
+	}
+	fmt.Println(data[0])
+	fmt.Println(data[1])
+	cmd := exec.Command(f, conf["socket.cli_file"].String(), "socket", "checkCname", data[0], data[1])
+	var output bytes.Buffer
+	cmd.Stdout = &output
+	cmd.Start() //命令开始
+	go func() {
+		done <- cmd.Wait() //等待完成
+	}()
+	select {
+	case <-done:
+		rs = string(output.Bytes())
+		if rs != "1" {
+			rs = ""
+		}
+		fmt.Println("成功执行")
+	case <-time.After(time.Second * 5): //超时5s
+		rs = ""
+		fmt.Printf("超时5s")
+		if err = cmd.Process.Kill(); err != nil {
+			fmt.Println("failed to kill: %s, error: %s", cmd.Path, err)
+		}
+		go func() {
+			<-done
+		}()
+	}
+	return
+}
+func doFunc(funcName string, data []string) (rs string) {
+	switch funcName {
+	case "checkCname":
+		rs = checkCname(data)
+	}
+	return
+}
+func handleConnection(conn net.Conn) { //Socket连接
+
+	buffer := make([]byte, 2048)
+	n, err := conn.Read(buffer)
+	res := &Response2{}
+	json.Unmarshal([]byte(string(buffer[:n])), &res)
+	function := res.Func
+	rs := doFunc(function, res.Data)
+	if err != nil {
+		Log(conn.RemoteAddr().String(), " connection error: ", err)
+	} else {
+		conn.Write([]byte(string(rs)))
+	}
+
+	//Log(conn.RemoteAddr().String(), "receive data string:\n", string(buffer[:n]))
+	conn.Close()
+
+}
+func Log(v ...interface{}) {
+	log.Println(v...)
+}
+
+func CheckError(err error) {
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Fatal error: %s", err.Error())
+		os.Exit(1)
+	}
+}

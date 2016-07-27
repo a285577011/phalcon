@@ -1,0 +1,139 @@
+.modal.fade.in {
+
+}
+.modal.fade {
+    top: 20%;
+    transition: opacity 0.3s linear 0s, top 0.3s ease-out 0s;
+}
+.fade.in {
+    opacity: 1;
+}
+.hide {
+    display: none;
+}
+.modal {
+	  box-shadow: -5px 0 10px rgba(0, 0, 0, 0.1);
+    background-clip: padding-box;
+    background-color: #FFFFFF;
+    border-radius: 6px;
+    box-shadow: 0 3px 7px rgba(0, 0, 0, 0.3);
+    left: 50%;
+    margin-left: -280px;
+    outline: 0 none;
+    position: absolute;
+    top: 10%;
+    width: 560px;
+    z-index: 1050;
+}
+
+.modal-header {
+    border-bottom: 1px solid #EEEEEE;
+    padding: 9px 15px;
+}
+
+.modal-header .close {
+    margin-top: 2px;
+}
+.close {
+    color: #000000;
+    float: right;
+    font-size: 20px;
+    font-weight: bold;
+    line-height: 20px;
+    opacity: 0.2;
+    text-shadow: 0 1px 0 #FFFFFF;
+}
+
+.modal-header h3 {
+    line-height: 30px;
+    margin: 0;
+}
+.modal-footer:before, .modal-footer:after {
+    content: "";
+    display: table;
+    line-height: 0;
+}
+.modal-footer:after {
+    clear: both;
+}
+.modal-footer:before, .modal-footer:after {
+    content: "";
+    display: table;
+    line-height: 0;
+}
+.modal-footer {
+    background-color: #F5F5F5;
+    border-radius: 0 0 6px 6px;
+    border-top: 1px solid #DDDDDD;
+    box-shadow: 0 1px 0 #FFFFFF inset;
+    margin-bottom: 0;
+    padding: 14px 15px 15px;
+    text-align: right;
+}
+.modal-backdrop, .modal-backdrop.fade.in {
+    opacity: 0.1;
+}
+.modal-backdrop.fade {
+    opacity: 0;
+}
+.fade.in {
+    opacity: 1;
+}
+.modal-backdrop, .modal-backdrop.fade.in {
+    opacity: 0.1;
+    filter:alpha(opacity=50)
+}
+.modal-backdrop {
+    background-color: #000000;
+    bottom: 0;
+    left: 0;
+    position: fixed;
+    right: 0;
+    top: 0;
+    z-index: 1040;
+}
+.fade {
+    opacity: 0;
+    transition: opacity 0.15s linear 0s;
+}
+
+.modal-footer .btn + .btn {
+    margin-bottom: 0;
+    margin-left: 5px;
+}
+.btn {
+    border-color: rgba(0, 0, 0, 0.15) rgba(0, 0, 0, 0.15) rgba(0, 0, 0, 0.25);
+}
+
+
+ .ie{  
+       _position: absolute; 
+       _clear: both;  
+       _top:expression(eval(document.compatMode &&  
+               document.compatMode=='CSS1Compat') ?  
+               documentElement.scrollTop  
+               +(documentElement.clientHeight-this.clientHeight) - 1  
+               : document.body.scrollTop  
+               +(document.body.clientHeight-this.clientHeight) - 1);
+}
+
+.icon {
+	background: url("/images/bb.jpg") no-repeat scroll 0 0;
+	display: block;
+	height: 16px;
+	width: 16px;
+	left: -20px;
+	position: absolute;
+	top: 2px;
+}
+
+.auth-tip .ok {
+	color: #129c00;
+}
+
+.clipboard-tip {
+	position: absolute;
+	right: 40px;
+	top: 17px;
+	color:white;
+}

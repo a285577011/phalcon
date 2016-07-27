@@ -1,0 +1,33 @@
+<?php
+$this->partial('common/header');
+?>
+<body class="subscribe-mail">
+	<div class="main_box">
+		<form class="tip-box"
+			action="<?php echo $this->url->get('user/unsubscribe');?>"
+			method="post">
+			<input type="hidden" value="<?php echo $type? $type: '';?>"
+				name="type" />
+			<div class="tip-title">您确定要取消下架通知吗？（Are you sure to unsubscribe？）</div>
+			<div class="tip-content">
+				<div class="tip-item">
+					<input type="radio" name="unsubscribe" value="1">
+					我并不关心推广的域名或店铺是否下架（I don't care about the promotion of the domain or
+					shop is under the shelf）
+				</div>
+				<div class="tip-item">
+					<input type="radio" name="unsubscribe" value="2"> 我没有进行过推广（ I have
+					not carried on the promotion）
+				</div>
+				<div class="tip-item">
+					<input type="radio" name="unsubscribe" value="3"> 这是垃圾邮件（This is a
+					spam email）
+				</div>
+				<div class="break"></div>
+			</div>
+			<div class="tip-confirm">
+				<button type="submit" class="confirm">确定</button>
+			</div>
+		</form>
+	</div>
+<?php $this->partial('common/footer');?>

@@ -1,0 +1,186 @@
+<?php $this->partial("common/header"); ?>
+		
+		<div class="main_box">
+			<?php $this->partial("common/headernav"); ?>
+						<div class="right main">
+				<div class="com_tab_box clearfix">
+					<ul class="left">
+						<li><a href="<?php echo $this->url->get('custompage/custompagestyle')?>">添加展示页模板</a></li>
+						<li>|<a href="<?php echo $this->url->get('custompage/templatelist')?>">添加展示页模板列表</a></li>
+						<li>|<a href="<?php echo $this->url->get('custompage/addshowpage')?>">添加展示页域名</a></li>
+						<li>|<a href="<?php echo $this->url->get('custompage/index')?>">展示页域名列表</a></li>
+					</ul>
+				</div>
+				<div class="container">
+					<div class="mt20">
+					<form method="post" id="setpagedomain" action="<?php echo $this->url->get('custompage/doaddpagedomain')?>">
+						<table class="domain_table clearfix" width="100%">
+							<colgroup>
+								<col width="8%" />
+								<col />
+								<col width="25%" />
+								<col width="15%" />
+								<col width="15%" />
+								<col width="15%" />
+							</colgroup>
+							<thead>
+								<tr>
+									<th>选择</th>
+									<th>域名</th>
+									<th>简介</th>
+									<th>模板</th>
+									<th>显示交易信息</th>
+									<th>经纪中介信息</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr>
+									<td class="center"><input id="checkAll" type="checkbox" checked="checked" onclick="set_selectitems(this)"/> </td>
+									<td>批量设置</td>
+									<td><input type="text" class="com_input w_150" id="description"  /> </td>
+									<td>
+										<select class="com_select w_100" id="templateId">
+											<?php 
+											if($templates):
+												foreach ($templates AS $templateId=>$templateName):?>
+											<option value="<?php echo $templateId?>"><?php echo $templateName?></option>
+											<?php endforeach;else:?>
+											<option value='0'>暂无模版</option>
+											<?php endif;?>
+										</select>
+									</td>
+									<td class="center"><input type="checkbox" id="transinfo" onclick="set_selectitems(this)" /> </td>
+									<td class="center"><input type="checkbox" id="errowinfo" onclick="set_selectitems(this)" /> </td>
+								</tr>
+								<?php 
+								if($domains['success']):
+									foreach ($domains['success'] AS $key=> $v):
+										$domainTag = str_replace('.','_',$v);
+								?>
+								<tr class="data_row" id="<?php echo $domainTag?>">
+								<input type="hidden" name="<?php echo $domainTag."_md5"?>" value="<?php echo md5($v.$sid)?>" />
+									<td class="center"><input type="checkbox" checked="checked" name="domainName[]" value="<?php echo $v?>" class="checkAll" /> </td>
+									<td class="domainName"><?php echo $v?></td>
+									<td><input type="text" class="com_input w_150 description"   name="<?php echo $domainTag?>_description" value="<?php echo $decs[$v]?>"/> </td>
+									<td>
+											<select name="<?php echo $domainTag?>_templateId" id="<?php echo $domainTag?>_templateId" class="com_select w_100 templateId">
+											<?php foreach ($templates AS $templateId=>$templateName):?>
+											<option value="<?php echo $templateId?>" ><?php echo $templateName?></option>
+											<?php endforeach;?>
+										</select>
+									</td>
+									<td class="center"><input type="checkbox"   value="1" name="<?php echo $domainTag?>_transInfo" class="transinfo" id="<?php echo $domainTag?>_transInfo"  /> </td>
+									<td class="center"><input type="checkbox" value="1"  name="<?php echo $domainTag?>_errowInfo" class="errowinfo" id="<?php echo $domainTag?>_errowInfo" /> </td>
+								</tr>
+			<?php endforeach;else:?>
+								<tr>
+									<td colspan="6">暂无可设置展示页的域名</td>
+								</tr>
+								<?php endif;?>
+								
+							</tbody>
+						</table>
+		                <div class="com_btn_box mt20">
+		                	<input type="button" onclick="checkForm();" value="提 交" id="buref" class="refer_btn" />
+		                </div>
+		                </form>
+		                <div style="color:red">
+					<?php 
+					if($domains['false']):
+							foreach ($domains['false'] AS $k=>$v):
+								echo $messageConf[$k]."<br>";
+								foreach ($v as $error):
+									echo $error[0]."<br>"; 
+								endforeach;
+							endforeach;
+					endif;
+					?>
+					</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<script>
+var okForm = true;
+(function ($){
+	$.fn.borderRed = function (){
+		return this.each(function(){
+			var defaultColor = $(this).css("border-color");
+			var defaultWidth = $(this).css("border-width");
+			$(this).css("border-color","red");
+			$(this).css("border-width","2px");
+			$(this).click(function(){
+				$(this).css("border-color",defaultColor);
+				$(this).css("border-width",defaultWidth);
+			});
+		});
+	}})(jQuery);
+	
+$(document).ready(function(){
+	set_dec();
+	set_template();
+});
+
+function set_dec()
+{
+	$("#description").keyup(function(){
+		$(".description").val($("#description").val());
+	});
+}
+
+function set_template()
+{
+	$("#templateId").change(function(){
+		var tempval = $("#templateId").val();
+		$(".templateId").each(function(){
+			$(this).val(tempval);
+		});
+	});
+}
+
+
+function set_selectitems(obj)
+{
+	   var crtlid = obj.id;
+		var val;
+		var isaChecked = $("#"+crtlid).prop("checked"); 
+		if(!isaChecked)
+			val = false;
+		else
+			val = true;
+		$("."+crtlid).prop('checked', val);
+}
+
+function checkForm()
+{
+	$(".data_row").each(function(){
+		var domainname = $(this).children(".domainName").html();
+		var id = $(this).attr('id');
+		if($('#'+id+'_checkbox').attr('checked')=='checked' || $('#'+id+'_checkbox').attr('checked')==true)
+		{
+			if($('#'+id+'_templateId').val()==false)
+			{
+				$('#'+id+'_templateId').borderRed();
+				alert(domainname+"的模板不能为空");
+				okForm = false;
+				return false;
+			}
+			else
+			{
+				okForm = true;
+			}
+		} 
+		if(okForm == false){return false;}
+	});
+	if(okForm == false){okForm=true;return false;}
+	$("#buref").attr('disabled',"disabled");
+	$("#setpagedomain").submit();
+}
+
+</script>
+		<script>
+				 var lefturl = '<?php echo $this->url->get('custompage/index');?>';
+					var url='<?php echo $this->url->get('custompage/addpagedomain');?>';
+				navLight(url,lefturl,lefturl);
+</script>
+				<?php $this->partial("common/footer"); ?>

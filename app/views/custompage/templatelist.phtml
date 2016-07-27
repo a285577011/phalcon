@@ -1,0 +1,137 @@
+<?php $this->partial("common/header"); ?>
+		<div class="main_box">
+			<?php $this->partial("common/headernav"); ?>
+			<div class="right main">
+				<div class="com_tab_box clearfix">
+					<ul class="left">
+						<li><a href="<?php echo $this->url->get('custompage/custompagestyle')?>">添加展示页模板</a></li>
+						<li >|<a href="<?php echo $this->url->get('custompage/templatelist')?>">展示页模板列表</a></li>
+						<li  >|<a href="<?php echo $this->url->get('custompage/addshowpage')?>">添加展示页域名</a></li>
+						<li>|<a href="<?php echo $this->url->get('custompage/index')?>">展示页域名列表</a></li>
+					</ul>
+				</div>
+				<div class="container">
+				<form method="get">
+					<div class="com_search_box">
+					
+						<table width="100%">
+							<colgroup>
+								<col width="35%"/>
+								<col width="35%"/>
+								<col />
+							</colgroup>
+							
+							<tbody>
+								<tr>
+									<td>模板名称： <input type="text" id="templateName" name="templateName" value="<?php echo isset($html['getItems']['templateName']) ? $html['getItems']['templateName'] : '';?>" class="com_input w_120" /> </td>
+									<td>模板类型：
+										<select class="com_select w_100" name="templateType">
+											<option value="0">不限</option>
+										    <?php foreach ($html['templateTypeConf'] AS $k=>$v):?>
+										    <option value='<?php echo $k?>' <?php if(isset($html['getItems']['templateType']) && $k==$html['getItems']['templateType'])echo 'selected'?>><?php echo $v?></option>
+										    <?php endforeach;?>
+										</select> 
+									</td>
+									<td>审核状态：
+										<select class="com_select w_100" name="status">
+											<option value="0">不限</option>
+									    	<?php foreach ($html['templateStatusConf'] AS $k=>$v):?>
+									    	<option value='<?php echo $k?>' <?php if(isset($html['getItems']['status']) && $k==$html['getItems']['status'])echo 'selected'?>><?php echo $v?></option>
+									    	<?php endforeach;?>
+										</select> 
+									</td>
+								</tr>
+							</tbody>
+						</table>
+						
+					</div>
+					<div class="center mt20 mb20">
+						<input class="com_search_btn search_btn" type="submit" value="搜 索" />
+						<input class="com_search_btn ml10" type="reset" value="重 置"  onclick="searchFormReset();"/>
+					</div>
+					</form>
+					<div class="mt20">
+						<table class="domain_table clearfix" width="100%">
+							<colgroup>
+								<col width="23%"/>
+								<col width="13%"/>
+								<col width="15%"/>
+								<col width="22%"/>
+								<col/>
+							</colgroup>
+							<thead>
+								<tr>
+									<th>模板名称</th>
+									<th>域名数量</th>
+									<th>模板类型</th>
+									<th>审核状态</th>
+									<th>操作</th>
+								</tr>
+							</thead>
+							<tbody>
+							<?php
+							if($html['list']):
+								foreach ($html['list'] AS $v):
+							?>
+								<tr>
+									<td><?php echo $v['TemplateName']?></td>
+									<td><?php echo $v['DomainCount']?></td>
+									<td><?php echo $html['templateTypeConf'][$v['TemplateType']]?></td>
+									<td><?php echo$html['templateStatusConf'][$v['Status']];?></td>
+									<td class="c_gray caozuo"><a href="<?php echo $this->url->get('custompage/dataview?id='.$v['TemplateDId'])?>" target="_blank" >预览</a>|<?php if($v['Status'] != $html['templatestatus']['auditfalse'][0]):?><a href="<?php echo $this->url->get('custompage/settemplate?id='.$v['TemplateDId'])?>">修改</a>|<?php endif;?><a href="<?php echo $this->url->get('custompage/deltemplate?id='.$v['TemplateDId'])?>" onclick="delPageTemplate(this,'<?php echo $v['TemplateName']?>');return false;">删除</a></td>
+								</tr>
+						<?php endforeach;else:?>
+                            <tr><td colspan="5">暂无模板信息</td></tr>
+							<?php endif;?>
+								
+							</tbody>
+						</table>
+					</div>
+					<div class="page_box clearfix">
+						<div class="right art_page">
+							<?php echo $html['page'];?>
+							
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<script type="text/javascript" >
+    function rmTrMsg(msgobjid,selfobj) {
+        $('#'+msgobjid).hide('slow','swing',function(){ $(this).remove();});
+        if(selfobj) {
+            $(selfobj).hide('slow','swing',function(){ $(this).remove();});
+        }
+    }
+    function delPageTemplate(tobj,name) {
+        if(confirm('确认删除【'+name+'】模板')) {
+            var thistrobj = $(tobj).parents('tr');
+            $.ajax({
+                url:tobj.href,
+                success:function(data){
+                    var thtml = '';
+                    if(data.flag) {
+                        alert(data.error);
+                    	parent.location.href = '<?php echo $this->url->get('custompage/templatelist')?>';
+                    } else {
+                        thtml = '<tr id="trflashmsg"><td colspan="5" style="background:#fffaf4;text-align:right;color:#FF3535;">'+data.error+'</td></tr>';
+                    }
+                    thistrobj.after(thtml);
+                    if(data.flag) {
+                        setTimeout(function(){ rmTrMsg('trflashmsg',thistrobj); },2000);
+                    } else {
+                        setTimeout(function() { rmTrMsg('trflashmsg',false);} ,2000);
+                    }
+                }
+            });
+        }
+        return false;
+    }
+    
+</script>
+		<script>
+					var lefturl='<?php echo $this->url->get('custompage/index');?>';
+					var url='<?php echo $this->url->get('custompage/templatelist');?>';
+				navLight(url,lefturl,lefturl);
+</script>
+<?php $this->partial("common/footer"); ?>

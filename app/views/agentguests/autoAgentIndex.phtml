@@ -1,0 +1,100 @@
+<?php $this->partial("common/header"); ?>	
+<script src="/js/form.js"></script>
+<script type="text/javascript" src="/js/layer/layer.min.js"></script>
+		<link rel="stylesheet" type="text/css" href="/js/layer/skin/layer.css">
+		<div class="main_box">
+<?php $this->partial("common/headernav"); ?>
+			<div class="right main">
+<?php $this->partial("common/agentcommon"); ?>
+<div class="container">
+					<div class="step_box2">
+						<h3>生成域名库</h3>
+						<form action='<?php echo $this->url->get('Agentguests/autoAgentFirst');?>' id='doaminserach' name='doaminserach' method='post'>
+						<div class="com_search_box">
+							<table width="100%">
+								<colgroup>
+									<col width="30%"/>
+									<col width="30%"/>
+									<col />
+								</colgroup>
+								<tbody>
+									<tr>
+										<td><label class="search_lab">交易类型：</label><select class="com_select w_100" name="transType">
+										<option value="0">全部</option>
+										<option value="1">竞价</option>
+										<option value="4">一口价</option>
+										
+										</select></td>
+										<td><label class="search_lab">分 类：</label><select class="com_select w_100" name="Group">
+																			<option value="0">全部</option>
+										<?php 
+										foreach ($group as $key=>$val){
+													echo "<option value={$key} >{$val[0]}</option>";
+													}
+													?>
+										</select> </td>
+										<td><label class="search_lab">价 格：</label><input type="text" class="com_input w_80" name="StartPrice"/> - <input type="text" class="com_input w_80" name="EndPrice"/></td>
+									</tr>
+									<tr>
+																		<td><div style="position: relative;"><label class="search_lab">后 缀：  </label><select class="com_select w_100 <?php if(count($this->request->getQuery('Tld'))>=2){ echo "multiple";}?>" name="Tld[]" id="domaintld" <?php if(count($this->request->getQuery('Tld'))>=2){ echo "multiple='multiple'";}?>>
+										<option value="0">全部</option>
+											<?php foreach ($tld as $key=>$val){
+
+													echo "<option value={$key}>{$val[0]}</option>";
+										}?>
+								</select><a id="switchtld" class="deletions d_suffix" onclick="switchtld()" href="#">+</a>
+								</div>
+								</td>
+										<td><label class="search_lab">结束时间：</label><select class="com_select w_100" name="FinishTime">
+											<option value="0">全部</option>
+										<?php foreach ($finishTime as $key=>$val){
+													echo "<option value={$key}>{$val[0]}</option>";
+										}?>
+										</select></td>
+										<td><label class="search_lab">佣金比例：</label><span class="yongjin"><input type="text" class="com_input w_63" name="StartCommission"/>%</span> - <span class="yongjin"><input type="text" class="com_input w_63" name="EndCommission"/>%</span></td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+						<div class="center mt20 pb20">
+							<input class="com_search_btn search_btn" type="button" value="筛 选"  onclick="check_form();"/>
+							<input class="com_search_btn ml10" type="reset" value="重 置"  onclick="searchFormReset();"/>
+						</div>
+						</form>
+					</div>
+					<img src="/images/auto_agent.png" />
+				</div>
+			</div>
+		</div>
+			<script>
+	var url='<?php echo $this->url->get('Agentguests/autoAgentIndex');?>';
+	var left_url='<?php echo $this->url->get('Agentguests/domainAgent');?>';
+	navLight(url,left_url,left_url);
+	function switchtld()
+	{
+	var multiple = $("#domaintld").attr('multiple');
+	if(multiple=='multiple')
+	{
+	tldSimple();
+	}
+	else
+	{
+	tldMultiple();
+	}
+	}
+	function tldSimple()
+	{
+	$("#domaintld").removeClass('multiple');
+	$("#domaintld").removeAttr('multiple');
+	$("#switchtld").empty().html("+");
+	$("#searchButton").css('text-align','');
+	}
+	function tldMultiple()
+	{
+	$("#domaintld").addClass('multiple');
+	$("#domaintld").attr('multiple', 'multiple');
+	$("#switchtld").empty().html("-");
+	$("#searchButton").css('text-align','center');
+	}
+</script>
+<?php $this->partial("common/footer"); ?>

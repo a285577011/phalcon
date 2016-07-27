@@ -1,0 +1,121 @@
+<?php $this->partial("common/header"); ?>
+		
+		<div class="main_box">
+			<?php $this->partial("common/headernav"); ?>
+			<div class="right main">
+				<div class="com_tab_box clearfix">
+					<ul class="left">
+						<li><a href="<?php echo $this->url->get('custompage/custompagestyle')?>">添加展示页模板</a></li>
+						<li>|<a href="<?php echo $this->url->get('custompage/templatelist')?>">展示页模板列表</a></li>
+						<li>|<a href="<?php echo $this->url->get('custompage/addshowpage')?>">添加展示页域名</a></li>
+						<li>|<a href="<?php echo $this->url->get('custompage/index')?>">展示页域名列表</a></li>
+					</ul>
+				</div>
+				<div class="container">
+					<div class="mt20">
+					<form class="fabuform" method="post" action="">
+						<textarea class="com_textarea" name="domainName" id="domainName">在这要展示的域名，每行一个域名，格式可以为：(格式可以为：域名,域名简介)，最多50个</textarea>
+						<p class="com_xieyi">
+		                    <input type="checkbox" name="makesure" id="makesure" style="display:inline-block;">
+		                    <label class="line" for="makesure">我已阅读并同意
+		                        <a target="_blank" href="<?php echo $this->url->get('faq/detail/52') ?>">《域名联盟展示页服务协议》</a>
+		                    </label>
+		                </p>
+		                <div class="com_btn_box">
+		                	<input type="submit" onclick="return custompage();" value="提 交" class="refer_btn" />
+		                </div>
+		                </form>
+					</div>
+					<div class="com_note mt20 clearfix">
+	                    <h3 class="com_note_tit">注意事项：</h3>
+	                    <ul class="com_note_list mt15">
+	                        <li>我司代注接口下的域名和注册审核期内的域名不能发布展示页。</li>
+	                        <li>我司域名如果使用IIDNS并且已经设置www或空主机头的CNAME解析记录，将会默认覆盖，请谨慎操作。</li>
+	                        <li>其它注册商域名设置展示页，您需要手动添加3条cname记录指向cs.ename.net，展示页方可生效。</li>
+	                        <li>记录值：www、空主机头或@、易名ID，例如您的易名ID是10001，则需要添加3条记录:
+	                            <table width="220px">
+	                                <colgroup>
+	                                    <col width="25%">
+	                                    <col width="30%">
+	                                    <col>
+	                                </colgroup>
+	                                <tbody>
+	                                    <tr>
+	                                        <td>www</td>
+	                                        <td>cname</td>
+	                                        <td>cs.ename.net</td>
+	                                    </tr>
+	                                    <tr>
+	                                        <td>@</td>
+	                                        <td>cname</td>
+	                                        <td>cs.ename.net</td>
+	                                    </tr>
+	                                    <tr>
+	                                        <td>10001</td>
+	                                        <td>cname</td>
+	                                        <td>cs.ename.net</td>
+	                                    </tr>
+	                                </tbody>
+	                            </table>
+	                        </li>
+	                    </ul>
+	                </div>
+				</div>
+			</div>
+		</div>
+		<script>
+var textarea = "在这要展示的域名，每行一个域名，格式可以为：(格式可以为：域名,域名简介)，最多50个";
+function custompage(){
+	if ($('#domainName').val() == "" || $("#domainName").val()==textarea) {
+        alert("请输入域名");
+        return false;
+    }
+	 if(!$('#makesure').is(':checked'))
+    {
+        alert("请仔细阅读相关协议并同意");
+        return false;
+     }
+	$(".fabuform").attr('action', "<?php echo $this->url->get('custompage/addpagedomain')?>");
+    return checknum();
+}
+function checknum()
+{
+   var r = new RegExp('\n', "gi"); 
+   var len = $('#domainName').val();
+   if(len)
+    {
+    	len = len.match(r);
+    	if(len != null)
+    	{
+    		len = len.length;
+    		len = len + 1;
+    		if(len > 50)
+    		{
+        		alert("一次最多发布50个域名");
+        		return false;
+    		}
+    	}
+    }
+   return true;
+}
+$(document).ready(function(){
+	$("#domainName").click( function () { 
+		if($("#domainName").val()==textarea)
+		{
+			$("#domainName").val('');
+		}
+	});
+	$("#domainName").blur( function () { 
+		if($("#domainName").val()=='')
+		{
+			$("#domainName").val(textarea);
+		}
+	});
+});
+</script>
+		<script>
+					var lefturl='<?php echo $this->url->get('custompage/index');?>';
+					var url='<?php echo $this->url->get('custompage/addshowpage');?>';
+				navLight(url,lefturl,lefturl);
+</script>
+<?php $this->partial("common/footer"); ?>

@@ -1,0 +1,31 @@
+
+<div class="left com_aside">
+	<dl class="com_aside_dl">
+		<dt>
+			<a class="bangzhu" href="#">帮助中心</a>
+		</dt>
+		<dd style="display: block;">
+			<ul>
+			<?php foreach (\core\Config::item('faqType')->toArray() as $key => $value):
+			if($key == 6):continue;endif;?>
+				<li><a href="<?php echo $key == 7? $this->url->get('faq/detail/54'): $this->url->get('faq/index',array('type'=>$key));?>"><span><?php echo $value?></span>></a></li>
+			<?php endforeach;?>
+			</ul>
+		</dd>
+	</dl>
+	<dl class="com_aside_pro">
+		<dt>
+			<a class="tuijian" href="#">推荐问题</a>
+		</dt>
+		<dd>
+			<ul>
+			<?php
+			if(isset($recommendList) && $recommendList):
+				foreach($recommendList as $recommend):
+					?>
+				<li><a href="<?php echo $this->url->get('faq/detail/' . $recommend->Id);?>" target="_blank"><?php echo $recommend->Title;?></a></li>
+			<?php endforeach;endif;?>
+			</ul>
+		</dd>
+	</dl>
+</div>

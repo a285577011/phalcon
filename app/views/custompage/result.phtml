@@ -1,0 +1,72 @@
+<?php $this->partial("common/header"); ?>
+		
+		<div class="main_box">
+			<?php $this->partial("common/headernav"); ?>
+						<div class="right main">
+				<div class="com_tab_box clearfix">
+					<ul class="left">
+						<li><a href="<?php echo $this->url->get('custompage/custompagestyle')?>">添加展示页模板</a></li>
+						<li>|<a href="<?php echo $this->url->get('custompage/templatelist')?>">展示页模板列表</a></li>
+						<li  >|<a href="<?php echo $this->url->get('custompage/addshowpage')?>">添加展示页域名</a></li>
+						<li>|<a href="<?php echo $this->url->get('custompage/index')?>">展示页域名列表</a></li>
+						<li >|<a href="<?php echo $this->url->get('custompage/result')?>" onclick="return false;">操作成功</a></li>
+					</ul>
+				</div>
+			<div class="container">
+			<?php if($success){?>
+					<div class="suc_jiexi mt20">
+                    <h3>成功信息 :</h3>
+                        <ul>
+                        <?php 
+                        foreach($success AS $s){?>
+                        	<li>
+                             <?php echo  $s[0];?>,<font color="#ff490a"><?php echo $s[1];?></font>
+                            </li>
+                            <?php }?>
+                        </ul>
+                        </div>
+                        <?php }?>
+      
+                    <?php 
+				  	if(!empty($false))
+				  	{
+					?>
+                   <div class="fal_jiexi">
+                        <h3>
+                            失败信息：
+                        </h3>
+                        <ul>
+	                        <?php 
+                        foreach($false AS $e){?>
+                        	<li>
+                             <?php echo  $e[0];?>,<font color="#FF3535"><?php echo $e[1];?></font>
+                            </li>
+                            <?php }?>
+	                        </ul>
+                    </div>
+                    <?php 
+				  	}
+                    ?>
+                                    <?php 
+				  	if(!empty($url))	{?>
+	                        <?php 
+	                        foreach($url AS $u) { ?>
+                             <p class="myshowpage">
+                                <a href="<?php echo  $u[0];?>"><?php echo  $u[1];?></a>
+                            </p>
+	                        <?php 
+	                        }
+	                        ?>
+                    <?php 
+				  	}
+                    ?>
+                </div>
+		               
+					</div>
+					</div>
+	<script>
+					var lefturl='<?php echo $this->url->get('custompage/index');?>';
+					var url='<?php echo $this->url->get('custompage/result')?>';
+				navLight(url,lefturl,lefturl);
+</script>
+				<?php $this->partial("common/footer"); ?>

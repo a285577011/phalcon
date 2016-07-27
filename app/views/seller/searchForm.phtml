@@ -1,0 +1,90 @@
+<?php
+use core\Config;
+
+$tldList = Config::item('ts_domaintld')->toArray();
+$domainGroup = Config::item('domaingroup')->toArray();
+$finishTimeList = Config::item('finishtime')->toArray();
+
+echo $this->tag->form(array('method' => 'get', 'id' => 'search_form'));?>
+<script type="text/javascript" src="/js/layer/layer.min.js"></script>
+<link rel="stylesheet" type="text/css" href="/js/layer/skin/layer.css">
+<div class="com_search_box">
+	<table>
+		<colgroup>
+			<col width="220" />
+			<col width="300" />
+			<col />
+		</colgroup>
+		<tbody>
+			<tr>
+				<td><label class="search_lab">域 名： </label><?php echo $this->tag->textField(array('domainname', 'class' => 'com_input w_90', 'value' => $this->request->getQuery('domainname')));?></td>
+				<td><label class="search_lab">后 缀： </label> <select
+					name="domaintld" class="com_select w_100">
+						<option value="">全部后缀</option><?php
+				foreach($tldList as $k => $tld)
+				{
+					?>
+						<option value="<?php echo $k;?>"
+				<?php if($k == $this->request->getQuery('domaintld')) echo 'selected';?>><?php echo $tld;?>
+						</option>
+				<?php }?>
+					</select>
+				</td>
+				<td><label class="search_lab">分 类：  </label><select name="domaingroup"
+					class="com_select w_100">
+					<option value="">全部分类</option>
+					<?php
+					
+					foreach($domainGroup as $k => $transType)
+					{
+						?>
+						<option value="<?php echo $k;?>"
+				<?php if($k == $this->request->getQuery('domaingroup')) echo 'selected';?>><?php echo $transType[0];?>
+						</option>
+				<?php }?>
+					</select>
+				</td>
+			</tr>
+			<tr>
+				<td><label class="search_lab">交易类型： </label><select class="com_select w_100" name="transtype">
+						<option value="">全部</option>
+						<option value="1"
+							<?php if($this->request->getQuery('transtype') == 1) echo 'selected'; ?>>竞价</option>
+						<option value="4"
+							<?php if($this->request->getQuery('transtype') == 4) echo 'selected'; ?>>一口价</option>
+				</select>
+				</td>
+				<td><label class="search_lab">价 格：  </label>
+								<?php $scale = $this->request->getQuery('pricestart');echo $this->tag->textField(array('pricestart', 'class' => "com_input w_80", 'value' => $scale));?> - 
+								<?php echo $this->tag->textField(array('priceend', 'class' => "com_input w_80", 'value' => $this->request->getQuery('priceend')));?>
+				</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td><label class="search_lab">结束时间：  </label><select class="com_select w_100" name="finishtime" id="finishtime">
+						<option value="">全部时间</option>
+					<?php
+					
+					foreach($finishTimeList as $k => $finishTime)
+					{
+						?>
+						<option value="<?php echo $k;?>"
+				<?php if($k == $this->request->getQuery('finishtime')) echo 'selected';?>><?php echo $finishTime[0];?></option>
+			<?php }?>
+					</select>
+				</td>
+				<td><label class="search_lab">佣金比例： </label> 
+					<span class="yongjin"><?php $scale = $this->request->getQuery('percentstart');echo $this->tag->textField(array('percentstart', 'class' => "com_input w_63", 'value' => $scale)).'%</span> - 
+					<span class="yongjin">'. $this->tag->textField(array('percentend', 'class' => "com_input w_63", 'value' => $this->request->getQuery('percentend')));?>%</span>
+				</td>
+				<td></td>
+			</tr>
+		</tbody>
+	</table>
+</div>
+<div class="center mt20 mb20">
+		<input type="button" class='com_search_btn search_btn' value="搜 索"  onclick="submitForm('<?php echo $_SERVER['REQUEST_URI'];?>')" />
+		<input class="com_search_btn ml10" type="button" value="重 置"
+		onclick="searchFormReset()" />
+</div>
+<?php echo $this->tag->endForm();?>

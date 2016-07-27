@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>域名分销</title>
+		<meta name="keywords" content="">
+		<meta name="description" content="">
+		<script type="text/javascript" src="/js/jquery-1.11.3.min.js"></script>
+		<link rel="stylesheet" type="text/css" href="/css/public.css">
+		<link rel="stylesheet" href="/css/ydao.css" />
+		<!--[if IE 6]>
+		<script type="text/javascript" src="js/DD_belatedPNG.js" ></script>
+		<script type="text/javascript">
+		DD_belatedPNG.fix('.closebtn');
+		</script>
+		<![endif]-->
+	</head>
+	<body>
+		<div class="mask_box">
+			<div class="lead_box">
+				<ul class="lead_ul clearfix">
+					<li class="active"><img src="/images/guide2.jpg"><a href="javascript:void(0);" class="g_next g_next2"></a></li>
+					<li><img src="/images/guide3.jpg"><a href="javascript:void(0);" class="g_next g_next3"></a></li>
+					<li><img src="/images/guide4.jpg"><a href="javascript:void(0);" class="g_next g_next4"></a></li>
+					<li><img src="/images/guide5.jpg"><a href="javascript:void(0);" class="g_next g_next5"></a></li>
+					<li><img src="/images/guide6.jpg"><a href="javascript:void(0);" class="g_next g_next6"></a></li>
+					<li><img src="/images/guide7.jpg"><a href="javascript:void(0);" class="g_next g_next7"></a></li>
+					<li><img src="/images/guide8.jpg"><a href="javascript:void(0);" class="g_next g_next8"></a></li>
+					<li><img src="/images/guide9.jpg"><a href="<?php echo $this->url->get('seller/search');?>"  class="g_next g_next9"></a></li>
+				</ul>
+			<a href="<?php echo $this->url->get('seller/search');?>" class="closebtn"></a>			
+			</div>
+		</div>
+
+		
+
+		<script type="text/javascript">
+			$(function(){
+				$(".g_next").click(function(){
+					$(this).parent().removeClass('active').next().addClass('active');
+				})
+			})
+		</script>
+	</body>
+</html>

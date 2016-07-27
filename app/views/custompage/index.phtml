@@ -1,0 +1,272 @@
+<?php $this->partial("common/header"); ?>
+		
+		<div class="main_box">
+			<?php $this->partial("common/headernav"); ?>
+			<div class="right main">
+				<div class="com_tab_box clearfix">
+					<ul class="left">
+						<li><a href="<?php echo $this->url->get('custompage/custompagestyle')?>">添加展示页模板</a></li>
+						<li>|<a href="<?php echo $this->url->get('custompage/templatelist')?>">展示页模板列表</a></li>
+						<li >|<a href="<?php echo $this->url->get('custompage/addshowpage')?>">添加展示页域名</a></li>
+						<li>|<a href="<?php echo $this->url->get('custompage/index')?>">展示页域名列表</a></li>
+					</ul>
+				</div>
+				<div class="container">
+				<form method="get">
+					<div class="com_search_box">
+						<table width="100%">
+							<colgroup>
+								<col width="30%"/>
+								<col width="40%"/>
+								<col />
+							</colgroup>
+							<tbody>
+								<tr>
+									<td><label class="search_lab">域名：</label><input type="text" class="com_input w_90" id="domainname"  name="domainName"
+									value="<?php echo isset($list['getItems']['domainName']) ? $list['getItems']['domainName'] : '';?>" /> </td>
+									<td><label class="search_lab">状态：</label>
+										<select
+									name="status" id="status" class="com_select w_100">
+										<option value="0">不限</option>
+                                            <?php foreach ($list['statusConfLite'] AS $k=>$v):?>
+                                                <option
+											value="<?php echo $k?>"
+											<?php echo (isset($list['getItems']['status'])&&$list['getItems']['status']==$k) ? "selected" : '';?>><?php echo $v?></option>
+                                            <?php endforeach;?>
+										</select> 
+									</td>
+									<td><label class="search_lab">注册商：</label>
+										<select name="reger" id="reg" class="w_100 span_r">
+										<option value="0">不限</option>
+                                            <?php foreach ($list['regConf'] AS $k=>$v):?>
+                                                <option
+											value="<?php echo $k?>"
+											<?php echo (isset($list['getItems']['reger'])&&$list['getItems']['reger']==$k) ? "selected" : '';?>><?php echo $v?></option>
+                                            <?php endforeach;?>
+										</select> 
+									</td>
+								</tr>
+								<tr>
+									<td><label class="search_lab">模板：</label>
+										<select name="templateId" id="templateId" class="com_select w_100">
+											<?php if ($list['templates']):?>
+									    	<option value="0">不限</option>
+									    	<?php foreach ($list['templates'] AS $k=>$v):?>
+									    	<option value="<?php echo $k?>"
+											<?php echo (isset($list['getItems']['templateId'])&&$list['getItems']['templateId']==$k) ? "selected" : '';?>><?php echo $v?></option>
+									    	<?php endforeach;else:?>
+									    	<option value="0">暂无模版</option>
+									    	<?php endif;?>
+										</select> 
+									</td>
+									<td><label class="search_lab">交易信息：</label>
+										<select name="transInfo" id="transInfo" class="com_select w_100">
+										<option value="0">不限</option>
+									    	<?php foreach ($list['transInfoConf'] AS $k=>$v):?>
+									    	<option value="<?php echo $k?>"
+											<?php echo (isset($list['getItems']['transInfo'])&&$list['getItems']['transInfo']==$k) ? "selected" : '';?>><?php echo $v?></option>
+									    	<?php endforeach;?>
+										</select> 
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+					<div class="center mt20 mb20">
+						<input class="com_search_btn search_btn" type="submit" value="搜 索" />
+						<input class="com_search_btn ml10" type="reset" value="重 置"  onclick="searchFormReset();"/>
+					</div>
+					</form>
+					<div>
+						<table class="domain_table clearfix" width="100%">
+							<colgroup>
+								<col width="3%"/>
+								<col/>
+								<col width="12%"/>
+								<col width="10%"/>
+								<col width="12%"/>
+								<col width="10%"/>
+								<col width="13%"/>
+								<col width="19%"/>
+							</colgroup>
+							<thead>
+								<tr>
+									<th><input type="checkbox" id="ChkAll" onclick="checkAll();"/></th>
+									<th>域名</th>
+									<th>模板</th>
+									<th>交易信息</th>
+									<th>注册商</th>
+									<th>生效状态</th>
+									<th>创建时间</th>
+									<th>&nbsp;操作</th>
+								</tr>
+							</thead>
+							<tbody>
+							<?php
+							if($list['list'])
+							:
+								foreach($list['list'] as $key=>$v)
+								:
+									?>
+								<tr>
+									<td><input type="checkbox"  name="id[]" value="<?php echo $v->CustompageDId ;?>" /></td>
+									<td><?php echo $v->DomainName?></td>
+									<td><?php echo $list['templates'][$v->TemplateDId]?></td>
+									<td><?php if($v->TransInfo) {echo $list['transInfoConf'][$v->TransInfo];}?></td>
+									<td><?php echo $list['regConf'][$v->Reg]?></td>
+									<td><?php if($v->Status){echo $list['statusConfLite'][$v->Status];}?>&nbsp;
+									<?php echo in_array($v->Status, array($list['statusConf']['cname'][0], $list['statusConf']['page'][0])) ? '<a href="'.$this->url->get('custompage/doretry') .'?id='.$v->CustompageDId.'">重试</a>' : ''?>
+								</td>
+									<td><?php echo date('Y-m-d',$v->CreateTime);?></td>
+									<td class="c_gray caozuo"><a href="<?php echo $this->url->get('custompage/preview?id=').$v->CustompageDId?>" target="_blank">预览</a>|<a href="<?php echo $this->url->get('custompage/setpagedomain?a=set&id[]=').$v->CustompageDId?>"
+							>修改</a>|<a href="<?php echo $this->url->get('custompage/delpagedomain?a=del&id[]=').$v->CustompageDId?>" onclick="delPageDomain(this,'<?php echo $v->DomainName;?>');return false;">删除</a></td>
+								</tr>
+								<?php endforeach;else:?>
+							<tr>
+						<td colspan="8">没有记录信息</td>
+					</tr>
+							<?php endif;?>
+							</tbody>
+						</table>
+					</div>
+					<div class="page_box clearfix">
+						<div class="left">
+							<input class="com_btn" type="button" onclick="operate('<?php echo $this->url->get('custompage/setpagedomain')?>','set')" value="修 改" />
+							<input class="com_btn ml10" type="button" onclick="batchDelPageDomain(this,'<?php echo $this->url->get('custompage/delpagedomain')?>');return false;" value="删 除" />
+						</div>
+						<div class="right art_page">
+							<?php echo $list['pages'];?>
+						</div>
+					</div>
+					<div id="flashmessagediv"></div>
+					<div class="com_note mt20 mb20 clearfix">
+	                    <h3 class="com_note_tit">注意事项：</h3>
+	                    <ul class="com_note_list mt15">
+	                        <li>我司代注接口下的域名和注册审核期内的域名不能发布展示页。</li>
+	                        <li>我司域名如果使用IIDNS并且已经设置www或空主机头的CNAME解析记录，将会默认覆盖，请谨慎操作。</li>
+	                        <li>其它注册商域名设置展示页，您需要手动添加3条cname记录指向cs.ename.net，展示页方可生效。</li>
+	                        <li>记录值：www、空主机头或@、易名ID，例如您的易名ID是10001，则需要添加3条记录:
+	                            <table width="220px">
+	                                <colgroup>
+	                                    <col width="25%">
+	                                    <col width="30%">
+	                                    <col>
+	                                </colgroup>
+	                                <tbody>
+	                                    <tr>
+	                                        <td>www</td>
+	                                        <td>cname</td>
+	                                        <td>cs.ename.net</td>
+	                                    </tr>
+	                                    <tr>
+	                                        <td>@</td>
+	                                        <td>cname</td>
+	                                        <td>cs.ename.net</td>
+	                                    </tr>
+	                                    <tr>
+	                                        <td>10001</td>
+	                                        <td>cname</td>
+	                                        <td>cs.ename.net</td>
+	                                    </tr>
+	                                </tbody>
+	                            </table>
+	                        </li>
+	                    </ul>
+	                </div>
+				</div>
+			</div>
+		</div>
+		<script type="text/javascript">
+		function checkAll()
+		{	
+			var objs = document.getElementsByName('id[]');
+			for(i=0;i<objs.length;i++){
+				objs[i].checked = document.getElementById("ChkAll").checked;
+			}
+		}
+		function operate(url, option)
+		{
+			var objs = document.getElementsByName('id[]');
+			var uri = '?a=op';
+			for(i=0;i<objs.length;i++)
+			{
+				if(objs[i].checked)
+				{
+					uri += '&id[]='+objs[i].value;
+				}
+			}
+			if(uri=='?a=op')
+			{
+				alert("请选择要操作的域名展示页");
+				return false;
+			}
+
+			if(option == 'del')
+			{
+				if(!confirm("确定要删除吗？"))
+					return false;
+			}
+			window.location.href = url + uri; 
+		}
+    function rmTrMsg(msgobjid,selfobj) {
+        $('#'+msgobjid).hide('slow','swing',function(){ $(this).remove();});
+        if(selfobj) {
+            $(selfobj).hide('slow','swing',function(){ $(this).remove();});
+        }
+    }
+    function delPageDomain(tobj,name) {
+        if(confirm("确定要删除"+'【'+name+'】'+"展示页吗？")) {
+            var thistrobj = $(tobj).parents('tr');
+            $.ajax({
+                url:tobj.href,
+                success:function(data){
+                    var thtml = '';
+                    if(data == "删除失败") {
+                        thtml = '<tr id="trflashmsg"><td colspan="8" style="background:#fffaf4;text-align:right;color:#FF3535;">'+data+'</td></tr>';
+                    } else {
+                        alert(data);
+                    	parent.location.href = '<?php echo $this->url->get('custompage/index')?>';
+                    }
+                    thistrobj.after(thtml);
+                    if(data == "删除成功") {
+                        setTimeout(function(){ rmTrMsg('trflashmsg',thistrobj); },2000);
+                    } else {
+                        setTimeout(function() { rmTrMsg('trflashmsg',false);} ,2000);
+                    }
+                }
+            });
+        }
+        return false;
+    }
+    function batchDelPageDomain(tobj,url){
+        var objs = document.getElementsByName('id[]');
+        var uri = '?a=op';
+        for(i=0;i<objs.length;i++) {
+            if(objs[i].checked) {
+                uri += '&id[]='+objs[i].value;
+            }
+        }
+        if(uri=='?a=op') {
+            alert("请选择展示页");
+            return false;
+        }
+        if(confirm("确定要删除所选展示页吗")) {
+            $(tobj).attr('disabled',true);
+            $.ajax({
+                url: url+uri,
+                success:function(data){
+                    //console.log(data);
+                    $('#flashmessagediv').html(data);
+                    setTimeout(function(){ window.location.href=window.location.href;},2000);
+                }
+            });
+        }
+        return false;
+    }
+   
+</script>
+				<script>
+					var url='<?php echo $this->url->get('custompage/index');?>';
+				navLight(url,url,url);
+</script>
+<?php $this->partial("common/footer"); ?>

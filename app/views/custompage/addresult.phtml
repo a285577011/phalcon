@@ -1,0 +1,138 @@
+<?php $this->partial("common/header"); ?>
+		
+		<div class="main_box">
+			<?php $this->partial("common/headernav"); ?>
+						<div class="right main">
+				<div class="com_tab_box clearfix">
+					<ul class="left">
+						<li><a href="<?php echo $this->url->get('custompage/custompagestyle')?>">添加展示页模板</a></li>
+						<li>|<a href="<?php echo $this->url->get('custompage/templatelist')?>">展示页模板列表</a></li>
+						<li  >|<a href="<?php echo $this->url->get('custompage/addshowpage')?>">添加展示页域名</a></li>
+						<li>|<a href="<?php echo $this->url->get('custompage/index')?>">展示页域名列表</a></li>
+						<li>|<a href="<?php echo $this->url->get('custompage/addresult');?>" onclick="return false;">添加成功</a></li>
+					</ul>
+				</div>
+				<div class="container">
+					<?php 
+					if(!empty($success))
+				  	{
+					?>
+					<div class="suc_jiexi mt20">
+				
+						<h3>成功信息:</h3>
+						<ul>
+						<?php
+						 foreach($success AS $key=>$val)
+                        {
+                        ?>
+							<li><?php foreach ($val AS $k=>$v){?>
+                            	<?php if(is_array($v)){?>
+                                <?php echo $v['msg'];?><?php echo $v['domain'];?>
+                                <?php }else{?>
+                                <?php echo $v;?>
+                                <?php }?>
+                                                    <?php 
+				  	}
+                    ?><?php echo $messageConfig[$key];?>
+                            </li>
+                                                <?php 
+				  	}
+                    ?>
+              
+						</ul>
+						
+					</div>
+					
+						      <?php 
+				  	}
+                    ?>
+                    <?php 
+				  	if(!empty($false))
+				  	{
+					?>
+                    <div class="fal_jiexi">
+						<h3>失败信息:</h3>
+						<ul>
+	                        <?php 
+	                        foreach($false AS $key=>$val)
+	                       			 {
+	                        ?>
+                        	<li><?php foreach ($val AS $k=>$v){?>
+                            	<?php if(is_array($v)){?>
+                              <?php echo $v['msg'];?> <?php echo $v['domain'];?>
+                                <?php }else{?>
+                                <?php echo $v;?>
+                                <?php }?>
+                            <?php }?>,<?php echo $messageConfig[$key];?>
+                            
+                            </li>
+	                        <?php 
+	                        }
+	                        ?>
+                        </ul>
+                    </div>
+                    <?php 
+				  	}
+                    ?>
+                    <?php 
+				  	if(!empty($url))
+				  	{
+					?>
+	                        <?php 
+	                        foreach($url AS $u)
+	                        {
+	                        ?>
+                            <p class="myshowpage">
+                                <a href="<?php echo  $u[0];?>"><?php echo  $u[1];?></a>
+                            </p>
+	                        <?php 
+	                        }
+	                        ?>
+	                        
+                    <?php 
+				  	}
+                    ?>
+                    <div class="com_note mt100 clearfix">
+	                    <h3 class="com_note_tit">注意事项：</h3>
+	                    <ul class="com_note_list mt15">
+	                        <li>我司代注接口下的域名和注册审核期内的域名不能发布展示页。</li>
+	                        <li>我司域名如果使用IIDNS并且已经设置www或空主机头的CNAME解析记录，将会默认覆盖，请谨慎操作。</li>
+	                        <li>其它注册商域名设置展示页，您需要手动添加3条cname记录指向cs.ename.net，展示页方可生效。</li>
+	                        <li>记录值：www、空主机头或@、易名ID，例如您的易名ID是10001，则需要添加3条记录:
+	                            <table width="220px">
+	                                <colgroup>
+	                                    <col width="25%">
+	                                    <col width="30%">
+	                                    <col>
+	                                </colgroup>
+	                                <tbody>
+	                                    <tr>
+	                                        <td>www</td>
+	                                        <td>cname</td>
+	                                        <td>cs.ename.net</td>
+	                                    </tr>
+	                                    <tr>
+	                                        <td>@</td>
+	                                        <td>cname</td>
+	                                        <td>cs.ename.net</td>
+	                                    </tr>
+	                                    <tr>
+	                                        <td>10001</td>
+	                                        <td>cname</td>
+	                                        <td>cs.ename.net</td>
+	                                    </tr>
+	                                </tbody>
+	                            </table>
+	                        </li>
+	                    </ul>
+	                </div>
+                </div>
+		               
+					</div>
+					</div>
+		<script>
+		var lefturl='<?php echo $this->url->get('custompage/index');?>';
+		var url='<?php echo $this->url->get('custompage/addresult');?>';
+	navLight(url,lefturl,lefturl);
+</script>
+				<?php $this->partial("common/footer"); ?>

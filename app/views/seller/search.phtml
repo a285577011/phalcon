@@ -1,0 +1,110 @@
+<?php
+$this->partial('common/header');
+?>
+<div class="main_box">
+		<?php $this->partial('common/headernav');?>
+		<div class="right main">
+		<div class="com_tab_box">
+			<ul class="clearfix">
+				<li class="active"><a href="#">发域名</a></li>
+				<li>|<a href="<?php echo $this->url->get('seller/shop');?>">发店铺</a></li>
+			</ul>
+		</div>
+		<div class="container">
+			<?php $this->partial('seller/searchForm');?>
+			<div>
+				<ul class="domain_tab_ul clearfix">
+					<li><a class="cur" href="#">所有域名</a></li>
+					<li><a href="<?php echo $this->url->get('seller/unseted');?>">未设置</a></li>
+					<li><a href="<?php echo $this->url->get('seller/agented');?>">已设置</a></li>
+					<li><a href="<?php echo $this->url->get('seller/sold');?>">已售出</a></li>
+				</ul>
+				<table class="domain_table clearfix" width="100%">
+					<colgroup>
+						<col width="3%" />
+						<col />
+						<col width="12%" />
+						<col width="15%" />
+						<col width="18%" />
+						<col width="25%" />
+					</colgroup>
+					<thead>
+						<tr>
+							<th><input type="checkbox" class="all_checked"
+								onclick="allChecked(this)" /></th>
+							<th>域名</th>
+							<th>类型</th>
+							<th><a
+								href="<?php echo $this->url->get('seller/search', array_merge($this->request->getQuery(), array('sort' => 'price-'.$order['priceSort'])));?>">当前价格 <?php echo $order['priceSymbol'];?></a></th>
+							<th><i class="have_problem" style="margin-top: -2px;"
+								title="结束时间小于2小时的域名不进入米仓"></i><a
+								href="<?php echo $this->url->get('seller/search', array_merge($this->request->getQuery(), array('sort' => 'finishtime-'.$order['finishTimeSort'])));?>">
+									剩余时间 <?php echo $order['finishTimeSymbol'];?></a></th>
+							<th>佣金比例</th>
+						</tr>
+					</thead>
+					<tbody>
+						<?php
+						
+						if(! $isEmpty)
+						{
+							foreach($domainList as $domain)
+							{
+								?>
+						<tr>
+							<td><input type="checkbox"
+								value="<?php echo $domain['DomainName'];?>"
+								class="select_domain" name="domain" onclick="isAllChecked();"
+								<?php echo isset($domain['IsEdit']) && !$domain['IsEdit']? 'disabled': '';?> /></td>
+							<td><?php echo $domain['DomainName'];if($domain['Topic'] == 8):echo '&nbsp;<img src="../images/ico_03.png" alt="拍卖会" title="拍卖会" />';endif;?></td>
+							<td><?php if($domain['TransType'] == 4) echo '一口价';else echo '竞价';?></td>
+							<td><?php echo $domain['Price'].'元';?></td>
+							<td><?php echo $domain['FinishTime'];?></td>
+							<td class="caozuo"><?php if(isset($domain['Percent']) && $domain['Percent']){ echo $domain['Percent'].'%';} else{?><input
+								class="com_btn" type="button" value="设置佣金"
+								onclick="inputScale(this, '<?php echo $domain['DomainName'];?>', '<?php echo $this->url->get('seller/agent');?>', false)" /><?php }?></td>
+						</tr>
+				<?php
+							}
+						}
+						else
+						{
+							?>
+						<tr>
+							<td colspan="6" style="text-align: center;"><?php echo isset($error) && $error? '系统出错，请联系客服': '无查询结果';?></td>
+						</tr>
+					<?php }?>
+					</tbody>
+				</table>
+			</div>
+			<?php if(! $isEmpty):?>
+			<div class="page_box clearfix">
+				<p class="service_box">
+					<input type="checkbox" name="service-agr" id="service-agr" />请勾选并同意<a
+						href="<?php echo $this->url->get('faq/detail/53');?>">《域名联盟推广服务协议》</a>
+				</p>
+				<div class="left">
+					<input class="com_btn" type="button" value="批量设置"
+						onclick="multiSetAgent(this,'<?php echo $this->url->get('seller/agent');?>');" />
+				</div>
+				<div class="right"><?php echo $pageLink;?></div>
+			</div>
+			<div class="com_note mt20 mb20 clearfix">
+				<h3 class="com_note_tit">注意事项：</h3>
+				<ul class="com_note_list mt15">
+					<li>设置成功的域名，将在30分钟后生效并进入米市，生效之后佣金比例将无法进行修改和删除，直到域名下架。</li>
+				</ul>
+			</div>
+		<?php endif;?>
+		</div>
+	</div>
+</div>
+<script type="text/javascript">
+	$(function(){
+		navLight("<?php echo $this->url->get('seller/search');?>", "<?php echo $this->url->get('seller/search');?>", "<?php echo $this->url->get('seller/search');?>");
+	});	
+
+</script>
+<?php $this->partial('seller/js');?>
+<?php $this->partial('common/footer');?>
+

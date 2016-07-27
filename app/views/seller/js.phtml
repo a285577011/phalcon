@@ -1,0 +1,251 @@
+<script type="text/javascript">
+	// flag为true时，已设置列表修改佣金比例
+	function inputScale(scaleBtn, param, url, flag) {
+		var agentObj = $(scaleBtn).parent();
+		var html = '<span class="scale_box"><?php echo $this->tag->textField(array('scale', 'class' => 'scale_input'));?>%</span><a class="ml10" style="margin-left:10px;" href="javascript:void(0);">完成</a>';
+		html += '|<a href="javascript:void(0)" onclick="cancel(this, \''+param+'\','+flag+')">取消</a>';
+		agentObj.html(html);
+		agentObj.find('.scale_box .scale_input').focus();
+		
+		$('.ml10').click( function(){
+			var percent = agentObj.find('.scale_box .scale_input').val();
+			if(percent == '') {
+				alert('请先设置佣金比例！');
+				return false;
+			}
+			agent(percent, param, url);
+		});
+	}
+
+	// 取消设置佣金比例
+	function cancel(obj, param, flag){
+		if(flag == false) {
+			$(obj).parent().html('<input class="com_btn" type="button" value="设置佣金"  onclick="inputScale(this, \''+param+'\', \'<?php echo $this->url->get('seller/agent');?>\', false)" />');
+		} else {
+			$.ajax({
+				url: '<?php echo $this->url->get('seller/update');?>',
+				type: 'POST',
+				dataType: 'JSON',
+				data: {'id' : param},
+				success: function(data){
+					if(data.status == true) {
+						var html = data.isEdit? '<a href="javascript:void(0);" onclick="inputScale(this, '+param+', \'<?php echo $this->url->get('seller/edit');?>\', true)">修改</a>|' +
+								'<a href="<?php echo $this->url->get('seller/delete');?>" onclick="deletePercent(this, '+param+');return false;">删除</a>':'-';
+						$(obj).parent().html(html);
+					} else {
+						window.location.reload();
+					}
+				}
+			});
+		}
+	}
+	
+	// 批量设置佣金比例
+	function multiSetAgent(multiAgentBtn, url) {
+		var agentObj = $(multiAgentBtn).parent();
+		$(multiAgentBtn).remove();
+		agentObj.html('设置比例：<span class="scale_box"><?php echo $this->tag->textField(array('scale','class' => 'scale_input'))?>%</span>'+
+				'<a class="ml10 multi_set" href="javascript:void(0);">完成</a> | <a href="javascript:void(0)" onclick="cancelMulti(this,<?php echo $_SERVER['REQUEST_URI'] == $this->url->get('seller/agented')? 1:0;?>)">取消</a>'
+		);
+		agentObj.find('.scale_box .scale_input').focus();
+		
+		$('.multi_set').click(function(){
+			var percent = $(this).prev('.scale_box').find('.scale_input').val();
+			var checkObj = $('.select_domain');
+			var domainName = [];
+
+			for(var i=0;i<checkObj.length;i++) {
+				if(!checkObj[i].checked) {
+					continue;
+				}
+				domainName.push(checkObj[i].value);
+			}
+			
+			if(domainName.length == 0) {
+				alert('请先选择您要设置佣金比例的域名！');
+				return false;
+			}
+			
+			if(percent == '') {
+				alert('请先设置佣金比例！');
+				return false;
+			}
+			
+			agent(percent, domainName, url);
+			
+		});
+	}
+
+	// 取消批量设置佣金比例
+	function cancelMulti(obj, flag) {
+		var btnValue = flag == 1? '批量修改': '批量设置';
+		var url = flag == 1? '<?php echo $this->url->get('seller/edit');?>': '<?php echo $this->url->get('seller/agent');?>';
+		var html = '<input class="com_btn" type="button" value="'+ btnValue+'" onclick="multiSetAgent(this,\''+url+'\');" /> ';
+		html += flag == 1? '<input class="com_btn" type="button" value="批量删除" onclick="deletePercent(this,\''+url+'\');" />':'';
+		$(obj).parent('.left').html(html);
+		
+		$(':checkbox').prop('checked', false);
+	}
+	
+	// ajax提交
+	function agent(percent, param, url) {
+		var reg = new RegExp('^[1-9][0-9]?$');
+		var isAgree = $('#service-agr').prop('checked')? 1:0;
+		if(!reg.test(percent)) {
+			alert('请输入1到99的整数！');
+			return false;
+		}
+		if('/seller/agent' == url && isAgree != 1) {
+			alert('请勾选并同意《域名联盟推广服务协议》');
+			return false;
+		}
+		
+		if(!confirm("确定设置佣金比例为" + percent+'%？')) {
+			return false;
+		}
+
+		$.ajax({
+			url: url,
+			type: "post",
+			dataType: "json",
+			data: {"param" : param, "percent" : percent, 'agreement' : isAgree},
+			success:function(data){
+ 				if(data.flag == 3) {
+ 					alert('设置成功，30分钟后，设置生效，佣金比例无法再进行修改或者删除，直到域名下架。');
+	 				window.location.reload();
+ 				} else if(data.flag == 2) {
+ 		 			alert(data.msg);
+ 		 			$(':checkbox').prop('checked', false);
+ 		 			return false;
+ 	 			} else if(data.flag == 1) {
+ 	  				alert('请先选择您要设置佣金比例的域名！');
+ 	  				return false;
+ 				} else if(data.flag == 4) {
+ 	 				alert('请勾选并同意《域名联盟推广服务协议》');
+ 	 				return false;
+ 				} else if(data.flag == 5) {
+ 	 				alert('系统出错，请联系客服');
+ 	 				return false;
+ 				} else if(data.flag == 6) {
+ 					alert('请先设置佣金比例！');
+ 					return false;
+ 				} else {
+ 	 				alert(data);
+ 	 				return false;
+ 				}
+			}
+		});
+	}
+
+	// 验证搜索表单
+	function submitForm(url) {
+		var errorMsg = '';
+		var error = false;
+		var pStart = $('#pricestart').val();
+		var pEnd = $('#priceend').val();
+		var sStart = $('#percentstart').val();
+		var sEnd = $('#percentend').val();
+		var reg = new RegExp('^(?:0|[1-9][0-9]?|100)$');
+
+		if(pStart) {
+			if(isNaN(pStart)) {
+				error = true;
+				errorMsg = '起始价格必须为数字';
+				$('#pricestart').val(0);
+				$('#pricestart').focus();
+			} else if(!(/^\d+$/.test(pStart))) {
+				error = true;
+				errorMsg = '起始价格必须为整数';
+				$('#pricestart').focus();
+			}
+
+			if(parseInt(pStart) < 0) {
+				error = true;
+				errorMsg = '起始价格必须大于0';
+			}
+		}
+
+		if(pEnd) {
+			if(isNaN(pEnd)) {
+				error = true;
+				errorMsg = '结束价格必须为数字';
+			} else if(!/^\d+$/.test(pEnd)) {
+				error = true;
+				errorMsg = '结束价格必须为整数';
+			}
+
+			if(parseInt(pEnd) < 0) {
+				error = true;
+				errorMsg = '结束价格必须大于0';
+			}
+		}
+		
+		if(sStart) {
+			if(isNaN(sStart)) {
+				error = true;
+				errorMsg = '起始佣金比例必须为数字';
+			} else if(!/^(?:0|[1-9][0-9]?|100)$/.test(sStart)) {
+				error = true;
+				errorMsg = '起始佣金比例必须为0到100的整数';
+			}
+		}
+		
+		if(sEnd) {
+			if(isNaN(sEnd)) {
+				error = true;
+				errorMsg = '结束佣金比例必须为数字';
+			} else if(!/^(?:0|[1-9][0-9]?|100)$/.test(sEnd)) {
+				error = true;
+				errorMsg = '结束佣金比例必须为0到100的整数';
+			}
+		}
+		
+		if(pStart && pEnd && parseInt(pStart) > parseInt(pEnd)) {
+			error = true;
+			errorMsg = '结束价格必须大于起始价格';
+		}
+
+		if(sStart && sEnd && parseInt(sStart) > parseInt(sEnd)) {
+			error = true;
+			errorMsg = '结束佣金比例必须大于起始佣金比例';
+		}
+		
+		if (error == true) {
+			layer.msg(errorMsg,{icon: 2});
+			return false;
+		}
+		
+		$('#search_form').attr('action', url);
+		$('#search_form').submit();
+	}
+
+	$( function() {
+		/* 超过半个小时，不可选 */
+		var flag = true; // 判断是否所有都为不可选
+		
+		$('.select_domain').each( function() {
+			if($(this).attr('disabled') != 'disabled') {
+				flag = false;
+			}
+		});
+		$('.all_checked').attr('disabled', flag);
+
+		$('.com_btn').attr('disabled', flag);
+		flag && $('.com_btn').addClass('com_btn_false');
+		flag && $('.com_btn').attr({'title': '没有可操作的选项'});
+		/* 超过半个小时，不可选 */
+		
+		/* 不根据佣金比例|结束时间搜索 */
+		if(document.location.pathname == '/seller/search' || document.location.pathname == '/seller/unseted') {
+			$('#percentstart').attr("readonly","readonly");
+			$('#percentend').attr('readonly', 'readonly');
+			$('#percentstart').parent().addClass('yongjindis').attr('title', '不可选');
+			$('#percentend').parent().addClass('yongjindis').attr('title', '不可选');
+		} else if (document.location.pathname == '/seller/sold') {
+			$('#finishtime').attr('disabled', 'disabled').attr('title', '不可选');
+		}
+		/* 不根据佣金比例|结束时间搜索 */
+		
+	});
+	
+</script>

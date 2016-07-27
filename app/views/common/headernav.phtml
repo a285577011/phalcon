@@ -1,0 +1,31 @@
+
+<div class="left com_aside">
+				<dl class="com_aside_dl">
+					<dt><a class="minong" href="javascript:void(0);">我是米掌柜</a></dt>
+					<dd>
+						<ul>
+							<li><a href="<?php echo $this->url->get('seller/search');?>"><span>米仓</span>></a></li>
+							<li><a href="<?php echo $this->url->get('static/farmerstatic');?>"><span>数据统计</span>></a></li>
+						</ul>
+					</dd>
+					<dt><a class="fenxiaoke" href="javascript:void(0);">我是米客</a></dt>
+					<dd>
+						<ul>
+							<li><a href="<?php echo $this->url->get('agentguests/domainagent');?>"><span>米市</span>></a></li>
+							<li><a href="<?php echo $this->url->get('agentguests/spreaddomain',array('topic'=>0));?>"><span>推广历史</span>></a></li>
+							<li><a href="<?php echo $this->url->get('platform/sitelist');?>"><span>推广渠道管理</span>></a></li>
+							<li><a href="<?php echo $this->url->get('custompage/index');?>"><span>我的展示页</span>></a></li>
+							<li><a href="<?php echo $this->url->get('static/gueststatic');?>"><span>数据统计</span>></a></li>
+						</ul>
+					</dd>
+					<dt><a class="guanli" href="javascript:void(0);">账号管理</a></dt>
+					<dd>
+						<ul>
+							<li><a href="<?php echo $this->url->get('user/finance');?>"><span>财务中心</span>></a></li>
+							<li><a href="<?php echo $this->url->get('user/turnout');?>"><span>申请转出</span>></a></li>
+							<li><a href="http://www.ename.net/member/bindmemberlist" target=_blank ><span>修改账号信息</span>></a></li>
+						</ul>
+					</dd>
+					<dt><a class="tongzhi" href="<?php echo $this->url->get('user/message', array('status' => 3));?>">消息通知</a></dt>
+					</dl>
+			</div>

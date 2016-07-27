@@ -1,0 +1,43 @@
+
+					    <?php
+				if(! empty($success))
+				{
+					?>
+    <div class="suc_jiexi mt20">
+    <ul>
+        <?php
+					foreach($success as $s)
+					{
+						?>
+            <li>
+				<?php echo  $s[0];?>,<?php echo $s[1];?>
+            </li>
+        <?php
+					}
+					?>
+        </ul>
+	</div>
+    <?php
+				}
+				?>
+    <?php
+				if(! empty($failed))
+				{
+					?>
+    <div class="fal_jiexi">
+		<ul>
+            <?php
+					foreach($failed as $e)
+					{
+						?>
+            <li>
+				<?php echo  $e[0];?>,<?php echo $e[1];?>
+            </li>
+            <?php
+					}
+					?>
+        </ul>
+	</div>
+    <?php
+				}
+				?>

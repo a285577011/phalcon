@@ -1,0 +1,28 @@
+.mask_box{position: absolute;width: 100%;height: 100%;min-width: 1300px; min-height: 1000px; background: #000;top: 0;left: 0; z-index: 998;}
+
+.lead_box{text-align: center; background: #000;position: relative;}
+.lead_box img{vertical-align: middle;}
+.lead_ul li{display: none;overflow: hidden;position: relative;*width: 1300px;}
+.lead_ul li.active{display:inline-block;_zoom:1;*display: block;}
+.lead_ul .g_next{position: absolute;display: block;width: 150px;height: 60px;border: 1px solid #000;background: #fff;opacity:0;filter:alpha(opacity:0); -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";}
+.lead_ul .g_next1{top: 462px;left: 434px;}
+.lead_ul .g_next2{top: 405px;left: 578px;}
+.lead_ul .g_next3{top: 530px;left: 822px;}
+.lead_ul .g_next4{top: 634px;left: 548px;}
+.lead_ul .g_next5{top: 493px;left: 973px;}
+.lead_ul .g_next6{top: 411px;left: 642px;}
+.lead_ul .g_next7{top: 619px;left: 748px;}
+.lead_ul .g_next8{top: 314px;left: 789px;}
+.lead_ul .g_next9{top: 462px;left: 264px;width: 200px;}
+.lead_ul .g_next10{top: 764px;left: 682px;}
+.lead_ul .g_next11{top: 379px;left: 579px;}
+.lead_ul .g_next12{top: 514px;left: 869px;}
+.lead_ul .g_next13{top: 362px;left: 821px;width: 260px;}
+.lead_ul .g_next14{top: 507px;left: 715px;}
+.lead_ul .g_next15{top: 545px;left: 715px;}
+.lead_ul .g_next16{top: 611px;left: 597px;}
+.lead_ul .g_next17{top: 531px;left: 597px;}
+.lead_ul .g_next18{top: 392px;left: 518px;width: 200px;}
+.lead_ul .g_next19{top: 572px;left: 730px;}
+
+.closebtn{display: inline-block;position: absolute;top: 20px;right: 30px;background: #fff;width: 90px;height: 43px;z-index: 999;background: url(../images/pass_btn.png) no-repeat center center;}

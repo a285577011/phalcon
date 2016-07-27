@@ -1,0 +1,418 @@
+<?php $this->partial("common/header"); ?>	
+<script type="text/javascript" src="/js/zclip/jquery.zclip.js"></script>
+<script src="/js/modal/bootstrap.js"></script>
+<link href="/css/modal/bootstrap.css" rel="stylesheet" />
+<script type="text/javascript" src="/js/layer/layer.min.js"></script>
+		<link rel="stylesheet" type="text/css" href="/js/layer/skin/layer.css">
+		<div class="main_box">
+<?php $this->partial("common/headernav"); ?>
+			<div class="right main">
+<?php $this->partial("common/agentcommon"); ?>
+<div class="container">
+<form action='' id="autoCreat" method='post'>
+					<div class="step_box2">
+						<h3>推广设置</h3>
+						<p class="notice">已生成域名库，请选择您的推广渠道。</p>
+						<div class="border_gray pb10">
+							<ul class="tuiguang_list clearfix">
+								<li class="w_100"><span class="theme">推广至：</span> </li>
+								<li>
+									<p><input type="radio" name="PlatformType" id="ziyou" value='1'/><label for="ziyou">我的网站</label> 
+								<i id='siteInfo'>
+								</i>
+									</p>
+									<p><input type="radio" name="PlatformType" id="zhanshi" value='2'/><label for="zhanshi">我的展示页<i id="cusInfo"></i></label>  </p>
+								</li>
+							</ul>
+						</div>
+						
+				<div class="pb20 border_gray stylechoose">
+					<ul class="tuiguang_list  clearfix">
+						<li class="w_100 mt15"><span class="theme mt10">推广位样式：</span> </li>
+						<li class="tuiguang_choose">
+							<p class="mt10"><input type="radio" name="StyleId" id="yangshi1" value='1'/><label for="yangshi1">样式1</label> </p>
+							<img src="/images/yangshi1.jpg" class="mt10" width="130" height="134" />
+						</li>
+						<li>
+							<p class="mt10"><input type="radio" name="StyleId" id="yangshi2" value='2' /><label for="yangshi2">样式2</label> </p>
+							<img src="/images/yangshi2.jpg" class="mt10" width="130" height="134" />
+						</li>
+						<li>
+							<p class="mt10"><input type="radio" name="StyleId" id="yangshi3" value='3' /><label for="yangshi3">样式3</label> </p>
+							<img src="/images/yangshi3.jpg" class="mt10" width="130" height="134" />
+						</li>
+					</ul>
+				</div>
+								<div class="pb20 border_gray themechoose">
+<div class="pb10 clearfix">
+					<div class="left w_100 mt15" style="padding-left: 20px;">
+						<span class="theme">选择模板：</span>
+					</div>
+					<ul class="tuiguang_list left clearfix moban" style="width: 530px;">
+					</ul>
+				</div>
+											<div class="com_note mt20 clearfix">
+	                    <h3 class="com_note_tit">注意事项：</h3>
+	                    <ul class="com_note_list mt15">
+	                        <li>推广代码将自动更替到您展示页模板上的推广位，如果不希望自动更新，点击<a href="#" class="handCopy">手动添加</a></li>
+	                        <li>自定义模板请使用其他方式推广</li>
+	                    </ul>
+	                </div>
+				</div>
+				 </br>
+				<p class="center"><input type="checkbox" name="checkAgreement" value='1'>请勾选并同意<a href="<?php echo $this->url->get('faq/detail/53');?>">《域名联盟推广服务协议》</a></p>
+						<div class="center mt20 pb20">
+						<input type="hidden" value='<?php echo $tld;?>' name='Tld'>
+						<input type="hidden" value='<?php echo $finishTime;?>' name='FinishTime'>
+						<input type="hidden" value='<?php echo $startPrice;?>' name='StartPrice'>
+						<input type="hidden" value='<?php echo $endPrice;?>' name='EndPrice'>
+						<input type="hidden" value='<?php echo $transType;?>' name='transType'>
+						<input type="hidden" value='<?php echo $group;?>' name='Group'>
+						<input type="hidden" value='<?php echo $endCommission;?>' name='EndCommission'>
+						<input type="hidden" value='<?php echo $startCommission;?>' name='StartCommission'>
+						<input type="hidden" value='1' name='Agreement'>
+							<input class="com_search_btn search_btn" type="button" value="推送"  onclick="creat();"/>
+						</div>
+					</div>
+					</form>
+				</div>
+			</div>
+		</div>
+		<div id="form-content" class="modal hide fade in ie" style="display: none;">
+						<div class="pop_main three">
+			<div class="pop_hd">
+				<a title="关闭" href="#" class="pop_close" data-dismiss="modal">x</a>
+				<h3>获取代码</h3>
+			</div>
+			<div class="pop_bd border_gray">
+				<div class="pop_top"></div>
+				<div class="center mb20">
+					 <textarea class="pop_area adData copy" readonly="1"></textarea>
+				</div> 
+			</div>
+			
+			<div class="com_btn_box mb30 mt20">
+            	<input type="button" value="关 闭" class="com_btn" data-dismiss="modal"/>
+            </div>
+		</div>
+		</div>
+		<script>
+		function creat(){
+			var PlatformType=$('input[name="PlatformType"]:checked').val();
+			var StyleId=$('input[name="StyleId"]:checked ').val();
+			var StyleIds=$('input[name="StyleIds"]:checked ').val();
+			var siteId=$('.site').val();
+			 if(PlatformType==''||PlatformType==undefined||PlatformType==null){
+				 layer.msg("请选择推广类型",{icon: 2});
+				 return false;
+				 }
+			 if(PlatformType==1){
+				 if(StyleId==''||StyleId==undefined||StyleId==null){
+					 layer.msg('请选择样式',{icon: 2});
+					 return false;
+					 }
+				 if(siteId==''||siteId==undefined||siteId==null){
+					 layer.msg('请选择一个网站',{icon: 5});
+					 $('.site').css('border', '2px red solid');
+					 return false;
+					 }
+				 if(!$('input[name="checkAgreement"]').prop("checked")){
+					 layer.msg('请勾选并同意《域名联盟推广服务协议',{icon: 5});
+					 return false;
+					 }
+				 $("#autoCreat").attr('action','<?php echo $this->url->get('Agentguests/autoAgentSecond');?>');
+				 $("#autoCreat").submit();
+				 }
+			 else if(PlatformType==2){
+					var Tld=$('input[name="Tld"]').val();
+					var FinishTime=$('input[name="FinishTime"]').val();
+					var EndPrice=$('input[name="EndPrice"]').val();
+					var StartPrice=$('input[name="StartPrice"]').val();
+					var Group=$('input[name="Group"]').val();
+					var transType=$('input[name="transType"]').val();
+					var StartCommission=$('input[name="StartCommission"]').val();
+					var EndCommission=$('input[name="EndCommission"]').val();
+					 var TemplateDId=$('.TemplateDId').val();
+					 if(TemplateDId==''||TemplateDId==undefined||TemplateDId==null){
+						 layer.msg('请选择模板数据',{icon: 2});
+						 return false;
+						 }
+				 if(StyleIds==''||StyleIds==undefined||StyleIds==null){
+					 alert('请选择模板');
+					 return false;
+					 }
+				 if(!$('input[name="checkAgreement"]').prop("checked")){
+					 layer.msg('请勾选并同意《域名联盟推广服务协议》',{icon: 5});
+					 return false;
+					 }
+		         $.ajax({
+				     type: "POST",
+				 url: "<?php echo $this->url->get('Agentguests/autoAgentSecond');?>",
+			     data: {'autoComplete':1,'StyleId':StyleIds,'PlatformId':TemplateDId,'PlatformType':PlatformType,'Tld':Tld,'FinishTime':FinishTime,'StartPrice':StartPrice,'EndPrice':EndPrice,'Group':Group,'transType':transType,'StartCommission':StartCommission,'EndCommission':EndCommission,'Agreement':1},
+				 beforeSend : function(){
+				},
+				 success: function(data){
+				             if(data){
+				            	 var id=data[1];
+				    	         $.ajax({
+								     type: "GET",
+								 url: "<?php echo $this->url->get('Custompage/autoAgentForUser');?>",
+								 data: {'templateid':data[1],'codeid':data[0]},
+								 beforeSend : function(){
+								},
+								 success: function(data){
+								             if(data){
+								            	 layer.confirm('推送成功', {icon: 1,title:'',
+									            	    btn: ['查看展示页','继续推广'] //按钮
+									            		}, function(){
+									            			window.open("/custompage/dataview?id="+id);
+									            		}, function(index){
+									            			layer.close(index);
+									            		});
+								             }        
+								         },
+								 error: function(){
+								 layer.msg("系统繁忙",{icon: 2});
+								 }
+								       });
+				             }        
+				         },
+				 error: function(){
+					 layer.msg("系统繁忙",{icon: 2});
+				 }
+				       });
+				 }
+		}
+		function copy(data){
+		    $(".copy").zclip({
+				path: "/js/zclip/ZeroClipboard.swf",
+				copy: function(){
+				return data;
+				},
+				beforeCopy:function(){/* 按住鼠标时的操作 */
+					$(this).css("color","orange");
+				},
+				afterCopy:function(){/* 复制成功后的操作 */
+					$('.pop_top').html('<span class="success_top">代码复制成功</span>');
+					//$(".copy-tips").fadeOut(3000);
+		        }
+			});
+		}
+		window.onload = function(){
+			 $('#ziyou').trigger('click');
+			} 
+		$(document).ready(function() {
+$("#ziyou").click(function(){
+	$('input[name="StyleId"]:eq(0)').prop("checked",true).parent().parent().siblings().find("input[name='StyleId']").prop("checked",false);
+	$('input[name="StyleId"]:eq(0)').parent().parent().addClass("tuiguang_choose").siblings().removeClass("tuiguang_choose");
+	$('.search_btn').val('生成代码');
+	$('.stylechoose').show();
+	$('.themechoose').hide();
+	 $("#siteInfo").html('');
+	 $('#cusInfo').html('');
+        $.ajax({
+    type: "POST",
+url: "<?php echo $this->url->get('Platform/getSiteByType');?>",
+data: {'PlatformType':1},
+beforeSend : function(){
+},
+        success: function(data){
+            if(data){
+                var str='<select class="com_select w_110 ml10 site" name="PlatformId" onchange="cancle_color(this)">';
+                str += '<option value="">--请选择--</option>';
+						for ( var k in data) {
+							str += '<option value='+data[k].PlatformId+'>'+data[k].Name+ '</option>';
+						}
+						
+						str += '</select><a target=_blank class="ml10" href="<?php echo $this->url->get('Platform/addSite');?>">新增网站+</a>';
+                $("#siteInfo").html(str);
+            }        
+        },
+error: function(){
+	layer.msg("系统繁忙",{icon: 2});
+}
+      });
+});
+
+$("#zhanshi").click(function(){
+	$('input[name="StyleIds"]:eq(0)').prop("checked",true).parent().parent().siblings().find("input[name='StyleIds']").prop("checked",false);
+	$('.search_btn').val('推送');
+	$('.stylechoose').hide();
+	$('.themechoose').show();
+ $("#siteInfo").html('');
+ $('#cusInfo').html('');
+ $.ajax({
+     type: "GET",
+ url: "<?php echo $this->url->get('Custompage/getTemplateBySid');?>",
+ data: {},
+ beforeSend : function(){
+},
+         success: function(data){
+                  if(data.flag){
+	                  var html='';
+	                  if(data.data.style==''||data.data.style==undefined||data.data.style==null){
+		                 html='此处仅显示系统模板，如果您还没有生成系统模板，请先去<a target=_blank href='+'<?php echo $this->url->get('custompage/custompagestyle');?>'+' >生成系统模板</a>，或者使用<em style="color:red;">我的网站推广</em>选项生成推广位代码。';
+	                  }else{
+	                	  $('#cusInfo').html('<a target=_blank class="ml10" href="<?php echo $this->url->get('custompage/custompagestyle');?>">新增展示页+</a>');
+	                	  var i=0;
+							for ( var k in data.data.style) {
+								html += '<li><p class="mt10"><input type="radio" id="muban1" name="StyleIds" value='+(parseInt(data.data.style[k].StyleId))+' /><label for="muban'+data.data.style[k].StyleId+'">'+data.data.style[k].tempname+'</label> </p><img src="/upload/images/template/system'+data.data.style[k].StyleId+'.jpg" class="mt10" width="130" height="116" /></li>';
+i++;
+								}
+		                  }
+	                  $('.moban').html(html);  
+             }
+              else{
+            	  layer.msg("系统繁忙",{icon: 5});
+
+                  }    
+         },
+ error: function(){
+ layer.msg("系统繁忙",{icon: 5});
+ },
+       });
+});
+$(".handCopy").click(function(){
+	$('.pop_top').html('');
+	var StyleIds=$('input[name="StyleIds"]:checked ').val();
+	var Tld=$('input[name="Tld"]').val();
+	var FinishTime=$('input[name="FinishTime"]').val();
+	var StartPrice=$('input[name="StartPrice"]').val();
+	var EndPrice=$('input[name="EndPrice"]').val();
+	var Group=$('input[name="Group"]').val();
+	var transType=$('input[name="transType"]').val();
+	var StartCommission=$('input[name="StartCommission"]').val();
+	var EndCommission=$('input[name="EndCommission"]').val();
+	 if(StyleIds==''||StyleIds==undefined||StyleIds==null){
+		 layer.msg("请选择模板",{icon: 2});
+		 return false;
+		 }
+	 if(!$('input[name="checkAgreement"]').prop("checked")){
+		 layer.msg('请勾选并同意《域名联盟推广服务协议》',{icon: 5});
+		 return false;
+		 }
+	 $('#form-content').modal({backdrop: 'static', keyboard: false}); 
+    $.ajax({
+        type: "POST",
+    url: "<?php echo $this->url->get('Agentguests/autoAgentSecond');?>",
+    data: {'PlatformType':2,'StyleId':StyleIds,'Tld':Tld,'FinishTime':FinishTime,'StartPrice':StartPrice,'EndPrice':EndPrice,'Group':Group,'transType':transType,'StartCommission':StartCommission,'EndCommission':EndCommission,'PlatformId':0,'Agreement':1},
+    beforeSend : function(){
+    },
+            success: function(data){
+                if(data){
+                   $(".adData").text(data[0]);
+                   setTimeout(function(){
+                    copy(data[0]);
+                   },150);
+                }        
+            },
+    error: function(){
+   layer.msg("系统繁忙",{icon: 2});
+    }
+          });
+});
+$(document).on('click',".tuiguang_list input[name=StyleIds]",(function(){
+	 var __this=$(this);
+     $.ajax({
+         type: "GET",
+     url: "<?php echo $this->url->get('Custompage/getTemplateBySid');?>",
+     data: {'styleid':__this.val()},
+     beforeSend : function(){
+    },
+             success: function(data){
+	             if(data.flag){
+	            	 creat_moban(data.data.style,data.data.data,__this.val());  
+	             }     
+             },
+     error: function(){
+     layer.msg("系统繁忙",{icon: 5});
+     }
+           });
+}));
+function creat_moban(style,data,style_id){
+    var html='';
+	for ( var k in style) {
+		html+='<li';
+		if(parseInt(style[k].StyleId)==parseInt(style_id)){
+            var select=' class="tuiguang_choose"><p class="mt10"><input type="radio" id="muban1" name="StyleIds" value='+(parseInt(style[k].StyleId))+' checked/><select class="TemplateDId">';
+             select += '<option value="">--请选择--</option>';
+					for ( var key in data) {
+						select += '<option value='+data[key].TemplateDId+'>'+data[key].TemplateName+ '</option>';
+					}
+					
+					select += '</select>';
+			html+=select;
+			}
+		else{
+			html+='><p class="mt10"><input type="radio" id="muban1" name="StyleIds" value='+(parseInt(style[k].StyleId))+' /><label for="muban'+style[k].StyleId+'">'+style[k].tempname+'</label>';
+			//console.log(data.data.style[k].styleid+'--');
+		}
+		html += '</p><img src="/upload/images/template/system'+parseInt(style[k].StyleId)+'.jpg" class="mt10" width="130" height="116" /></li>';
+		}
+	$('.moban').html(html);   
+	}
+$(document).on('click',".tuiguang_list img",(function(){
+	var __this=$(this);
+	if(parseInt($('input[name="PlatformType"]:checked ').val())==2){
+    $.ajax({
+        type: "GET",
+    url: "<?php echo $this->url->get('Custompage/getTemplateBySid');?>",
+    data: {'styleid':__this.parent().find('input[name=StyleIds]').val()},
+    beforeSend : function(){
+   },
+            success: function(data){
+	             if(data.flag){
+	            	 creat_moban(data.data.style,data.data.data,__this.parent().find('input[name=StyleIds]').val());            
+	             }     
+            },
+    error: function(){
+    layer.msg("系统繁忙",{icon: 5});
+    }
+          });
+	}else{
+		__this.parent().addClass("tuiguang_choose").siblings().removeClass("tuiguang_choose");
+		}
+    __this.parent().find('input[name=StyleIds]').prop("checked",true).siblings().prop("checked",false);
+    __this.parent().find('input[name=StyleId]').prop("checked",true).siblings().prop("checked",false);
+}));
+$(".tuiguang_list input[name=StyleId]").click(function(){
+	$(this).parent().parent().addClass("tuiguang_choose").siblings().removeClass("tuiguang_choose");
+});
+$(document).on('mousemove',".tuiguang_list img",(function(e){
+	 $(this).siblings(".imagebig").remove();
+		var xx = e.clientX;
+		var yy = e.clientY; 
+		var width = $(this).attr("width");
+		var height = $(this).attr("height");
+		var src = $(this).attr("src");
+		var srcs = src.split("/");
+		var newsrc = '';
+		for (var i = 0 ; i < srcs.length ; i++) {
+			if(i == (srcs.length-1)){
+				newsrc +='big' + srcs[i];
+			}else{
+				newsrc += srcs[i] + "/";
+			}
+		}
+		var bigImg = "<img class='imagebig' style='top:"+ (yy-100) +"px;left:"+ (xx + 10) +"px;' src="+ newsrc +" />";
+		$(this).parent().append(bigImg);
+	 }));
+$(document).on('mouseout',".tuiguang_list img",(function(){ 
+	 $(this).siblings(".imagebig").remove();
+	 }));
+		});
+		function cancle_color(obj){
+			if($(obj).val()!=''&&$(obj).val()!=undefined&&$(obj).val()!=null&&$(obj).val()!=0){
+				$(obj).removeAttr("style");
+			}else{
+				$(obj).css('border', '2px red solid');
+				}
+							 }
+
+</script>
+					<script>
+	var url='<?php echo $this->url->get('agentguests/autoagentindex');?>';
+	var left_url='<?php echo $this->url->get('agentguests/domainagent');?>';
+	navLight(url,left_url,left_url);
+</script>
+<?php $this->partial("common/footer"); ?>

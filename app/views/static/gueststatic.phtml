@@ -1,0 +1,249 @@
+<?php $this->partial("common/header"); ?>
+		<script type="text/javascript" src="/js/pickerDateRange/dateRange.js" ></script>
+		<link rel="stylesheet" href="/js/pickerDateRange/dateRange.css" />
+		<div class="main_box">
+			<?php $this->partial("common/headernav"); ?>
+			<div class="right main">
+				<div class="com_tab_box clearfix">
+					<ul class="left">
+						<li ><a href="<?php echo $this->url->get('static/gueststatic');?>">数据统计</a></li>
+						<li>|<a href="<?php echo $this->url->get('agentguests/platformstatistics',array('type'=>1));?>">渠道统计</a></li>
+					</ul>
+					</div>
+				<div class="container">
+					<div class="mt20">
+					<form  id="search" name="search" method="post"  >
+					<div class="ta_date" id="div_date_demo3">
+                    <span class="date_title" id="date_demo3"></span>
+                    <a class="opt_sel" id="input_trigger_demo3" href="#">
+                        <i class="i_orderd"></i>
+                    </a>
+                </div>
+                <div id="datePicker"></div>
+						<select class="com_select w_100 ml10" name="stype" id="stype" onchange="dostatic()">
+							<option value="">推广形式</option>
+							<?php if($html['spreadtype']){
+							foreach ($html['spreadtype'] as $key=>$val){
+								?>
+							<option value="<?php echo $key?>" <?php if(isset($html['stype']) && $html['stype'] == $key){echo 'selected';}?>><?php echo $val?></option>
+							<?php }}?>
+						</select>
+						<select class="com_select w_100 ml20" name="ptype" id="ptype" onchange="dostatic()">
+							<option value=''>推广渠道</option>
+							<?php if($html['plattype']){
+							foreach ($html['plattype'] as $key=>$val)
+							{
+								?>
+							<option value="<?php echo $key?>" <?php if(isset($html['ptype']) && $html['ptype'] == $key){echo 'selected';}else{echo '';}?>><?php echo $val?></option>
+							<?php }}?>
+													</select>
+						<input type="submit" class="com_search_btn ml20" id="getcsv"  value="导 出" />
+					 
+                </form>
+					</div>
+					<div class="mt20">
+					<table class="domain_details_list mt10" width="100%">
+							<colgroup>
+								<col width="16%" />
+								<col width="16%" />
+								<col width="16%" />
+								<col width="16%" />
+								<col width="16%" />
+								<col />
+							</colgroup>
+							<tbody>
+								<tr>
+									<td>
+										<div>
+											<p>成交金额</p>
+											<span id="all1"></span>
+										</div>
+									</td>
+									<td>
+										<div>
+											<p>结算佣金</p>
+											<span id="all2"></span>
+										</div>
+									</td>
+									<td>
+										<div>
+											<p>付款笔数</p>
+											<span id="all3"></span>
+										</div>
+									</td>
+									<td>
+										<div>
+											<p>点击数</p>
+											<span id="all4"></span>
+										</div>
+									</td>
+									<td>
+										<div>
+											<p>点击转化率</p>
+											<span id="all5"></span>
+										</div>
+									</td>
+									<td>
+										<div class="noborder">
+											<p>预估收入</p>
+											<span id="all6"></span>
+										</div>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+						</div>
+					<div id="constat" style="height: 400px; margin: 20px auto;"></div>
+				</div>
+			</div>
+		</div>
+<script src="/js/highcharts.js" type="text/javascript"></script> 
+		
+<script type="text/javascript">
+var dateRange = new pickerDateRange('date_demo3', {
+	aRecent7Days : 'aRecent7DaysDemo3', //最近7天
+	isTodayValid : true,
+	startDate : '<?php echo $html['starttime'];?>',
+	endDate : '<?php echo $html['endtime'];?>',
+	//needCompare : true,
+	//isSingleDay : true,
+	//shortOpr : true,
+	defaultText : ' 至 ',
+	inputTrigger : 'input_trigger_demo3',
+	theme : 'ta',
+	success : function(obj) {
+		$("#dCon_demo3").html('开始时间 : ' + obj.startDate + '<br/>结束时间 : ' + obj.endDate);
+		
+	}
+}); 
+window.onload=function(){
+	//$('.ta_btn_primary').trigger('click');
+}
+		$('.ta_btn_primary').click(function(){
+			dostatic();
+			});
+		Highcharts.setOptions({
+			lang: {
+		        contextButtonTitle: ''//默认是： Chart context menu.
+			}
+		});
+		 function dostatic()
+		 {
+			 $.ajax({
+					type: 'GET',
+					dataType:'json',
+					url: '<?php echo $this->url->get('static/dogueststatic')?>',
+					data: {
+						starttime: $('#startDate').val(),
+						endtime:$('#endDate').val(),
+						ptype:$('#ptype').val(),
+						stype:$('#stype').val()
+					},
+					timeout:20000,
+					success: function(data) 
+					{
+						if (data.flag) {
+							var list = data.data.data;
+							var das = new Array();
+							var detailacc = new Array();
+							var undercc= new Array();
+							var ccnum = new Array();
+							var estincome = new Array();
+							var clickcc= new Array();
+							var clickrev= new Array();
+							for(var key in list){
+								 das.push(list[key]['linkdate']);
+								 detailacc.push(list[key]['detailacc']);
+								 undercc.push(list[key]['undercc']);
+								 ccnum.push(list[key]['ccnum']);
+								 estincome.push(list[key]['estincome']);
+								 clickcc.push(list[key]['clickcc']);
+								 clickrev.push(list[key]['clickrev']);
+							}
+							$('#all1').html(data.data.detailacc);
+							$('#all2').html(data.data.undercc);
+							$('#all3').html(data.data.ccnum);
+							$('#all6').html(data.data.estincome);
+							$('#all4').html(data.data.clickcc);
+							$('#all5').html(data.data.clickrev);
+						    $('#constat').highcharts({
+						    	title :{
+						    		text:null
+					        	},
+						        chart: {
+							        marginTop:50,
+							        style:{
+							        	fontSize: '14px'				        	
+								        },
+						            events: {
+						                redraw: function () {
+						                    var label = this.renderer.label('数据更新中', 100, 120)
+						                        .attr({
+						                            fill: Highcharts.getOptions().colors[0],
+						                            padding: 10,
+						                            r: 5,
+						                            zIndex: 8
+						                        })
+						                        .css({
+						                            color: '#FFFFFF'
+						                        })
+						                        .add();
+
+						                    setTimeout(function () {
+						                        label.fadeOut();
+						                    }, 1000);
+						                }
+						            }
+						        },
+						        legend: {
+						            align: 'left',
+						            verticalAlign: 'top',
+						            x: 0,
+						            y: 0
+						        },
+						  
+						      	credits:{
+						    	     enabled:false // 禁用版权信息
+						    	},
+						        xAxis: {
+						        	categories: das
+						        },
+						        yAxis: { title: { text: '' }},
+						        series: [{
+							        name:'成交金额',
+							       
+						            data: detailacc
+						        },
+						        { name:'结算佣金',data: undercc},
+						        	{ name:'付款笔数', data: ccnum,visible: false},
+						        	{name:'点击数', data: clickcc,visible: false},
+						        	{ name:'点击转化率',data: clickrev ,visible: false},
+						        	{ name:'预估收入', data: estincome,visible: false}
+						        ]
+						});
+						} 
+						else{
+							alert(data.error);
+						}
+					}
+				});
+		 }
+		 $("#getcsv").click(function(){
+			 	var start = $('#startDate').val();
+			 	var endt = $('#endDate').val();
+			 	var pty = $('#ptype').val();
+			 	var sty = $('#stype').val();
+				$("#search").attr('action','<?php echo $this->url->get('static/exportguest')?>'+'?starttime='+start+'&endtime='+endt+'&ptype='+pty+'&stype='+sty);
+				
+			});
+			 
+		</script>
+				<script>
+		var top_url='<?php echo $this->url->get('Agentguests/domainAgent');?>';
+		var url='<?php echo $this->url->get('static/gueststatic');?>';
+	navLight(url,url,top_url);
+	$(function() {
+		dostatic();
+	})
+</script>
+<?php $this->partial("common/footer"); ?>

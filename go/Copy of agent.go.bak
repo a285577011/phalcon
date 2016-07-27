@@ -1,0 +1,278 @@
+package main
+
+import (
+	"fmt"
+	"log"
+	"net"
+	"os"
+	//"net/http"
+	//"io/ioutil"
+	"encoding/json"
+	//"net/url"
+	//"runtime"
+	"bytes"
+	"github.com/achun/tom-toml"
+	"os/exec"
+	"time"
+)
+
+//var client = &http.Client{}
+var done chan error = make(chan error)
+var ch chan int = make(chan int)
+
+/*type Response struct {
+  Code   string  `json:"code"`
+  Flag bool `json:"flag"`
+  Msg string `json:"msg"`
+}
+*/
+type Response2 struct {
+	Data []string `json:"content"`
+	Func string   `json:"function"`
+}
+
+/*func Post(http_url string, data map[string]string) (code string, flag bool, msg string) {
+
+	//post请求
+
+	postValues := url.Values{}
+	for key, value := range data {
+		postValues.Add(key, value)
+	}
+
+	resp, err := client.PostForm(http_url, postValues)
+
+	if err != nil {
+
+		fmt.Println(err.Error())
+
+	}
+
+	defer resp.Body.Close()
+
+	if resp.StatusCode == 200 {
+
+		body, _ := ioutil.ReadAll(resp.Body)
+		res := &Response{}
+		json.Unmarshal([]byte(string(body)), &res)
+		code, flag, msg = res.Code, res.Flag, res.Msg
+
+	}
+	return
+  }*/
+func main() {
+	conf, err := toml.LoadFile("config.toml")
+
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	socket_address := bytes.NewBufferString("")
+	socket_address.WriteString(conf["socket.ip"].String())
+	socket_address.WriteString(":")
+	socket_address.WriteString(conf["socket.port"].String())
+	netListen, err := net.Listen("tcp", socket_address.String())
+	CheckError(err)
+	defer netListen.Close()
+	Log("Waiting for clients")
+	for {
+		conn, err := netListen.Accept()
+		if err != nil {
+			continue
+		}
+		Log(conn.RemoteAddr().String(), " tcp connect success")
+		handleConnection(conn)
+	}
+
+}
+func goSetTemplate(everyRunTimes int, Arr []string) {
+	length := len(Arr)
+	f, err := exec.LookPath("php")
+	if err != nil {
+		fmt.Println("not install php")
+	}
+	conf, err := toml.LoadFile("config.toml")
+
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	for i := 0; i < length; i++ {
+		cmd := exec.Command(f, conf["socket.cli_file"].String(), "Page", "setTemplate", Arr[i])
+		cmd.Start()
+		d, _ := cmd.Output()
+		fmt.Println(string(d))
+		go func() {
+			done <- cmd.Wait()
+		}()
+		select {
+		case <-done:
+			fmt.Println("成功执行")
+		case <-time.After(time.Second * 6): //超时5s
+			fmt.Printf("超时5s")
+			if err = cmd.Process.Kill(); err != nil {
+				fmt.Println("failed to kill: %s, error: %s", cmd.Path, err)
+			}
+			go func() {
+				<-done
+			}()
+		}
+	}
+	ch <- everyRunTimes
+}
+func setTemplate(data []string) {
+	//http_url:="http://api-ename.com/alliance/setTemplate"
+	//data := map[string] string {"user":"alliance","appkey":"89dae41c0d705ceb55aa778e27033d7b"}
+	//for i :=0; i < length; i++{
+	//data["cusDomainId"]=Arr[i]
+	//Post(http_url,data)
+	//}
+
+	num := len(data)   //数组大小
+	maxRunTimes := 25  //最大并发数
+	everyDotimes := 40 //每次执行条数
+	if num > 1000 {
+		everyDotimes = num / maxRunTimes
+	}
+	everyRunTimes := num/everyDotimes + 1 //并发的次数
+	if everyRunTimes > maxRunTimes {
+		everyRunTimes = maxRunTimes
+	}
+	//fmt.Println(everyRunTimes)
+	//fmt.Println(everyDotimes)
+	//fmt.Println(num)
+	var start, end int
+	for i := 0; i < everyRunTimes; i++ {
+		start = i * everyDotimes
+		end = (i + 1) * everyDotimes
+		if end > num {
+			end = num
+		}
+		idArr := data[start:end]
+		go goSetTemplate(i, idArr)
+	}
+	for i := 0; i < everyRunTimes; i++ {
+		select {
+		case <-ch:
+			fmt.Println("read from ch")
+		case <-time.After(60 * time.Second): //超时5s
+			logfile, err := os.OpenFile("/var/www/go/setTemplate.log", os.O_RDWR|os.O_CREATE, 0)
+			if err != nil {
+				fmt.Printf("%s\r\n", err.Error())
+				os.Exit(-1)
+			}
+			defer logfile.Close()
+			logger := log.New(logfile, "\r\n", log.Ldate|log.Ltime|log.Llongfile)
+			logger.Println("helloasdasdsa")
+			logger.Println("oh....")
+			fmt.Printf("超时60s")
+		}
+	}
+}
+func checkCname(data []string) int {
+	f, err := exec.LookPath("php")
+	if err != nil {
+		fmt.Println("not install php")
+	}
+	conf, err := toml.LoadFile("config.toml")
+
+	if err != nil {
+		fmt.Println(err)
+		return 0
+	}
+	fmt.Println(data[0])
+	fmt.Println(data[1])
+	cmd := exec.Command(f, conf["socket.cli_file"].String(), "socket", "checkCname", data[0], data[1])
+	var output bytes.Buffer
+	cmd.Stdout = &output
+	cmd.Start()
+	go func() {
+		done <- cmd.Wait()
+	}()
+	var rs int
+	select {
+	case <-done:
+		if string(output.Bytes()) == "1" {
+			rs = 1
+		} else {
+			rs = 0
+		}
+		fmt.Println("成功执行")
+	case <-time.After(time.Second * 5): //超时6s
+		rs = 0
+		fmt.Printf("超时5s")
+		if err = cmd.Process.Kill(); err != nil {
+			fmt.Println("failed to kill: %s, error: %s", cmd.Path, err)
+		}
+		go func() {
+			<-done
+		}()
+	}
+	return rs
+}
+func goCheckCname(domain string, enameId string) {
+	f, err := exec.LookPath("php")
+	if err != nil {
+		fmt.Println("not install php")
+	}
+	conf, err := toml.LoadFile("config.toml")
+
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	c := exec.Command(f, conf["socket.cli_file"].String(), "socket", "checkCname", domain, enameId)
+	d, _ := c.Output()
+	if len(d) == 1 {
+		ch <- 1
+	} else {
+		ch <- 0
+	}
+	// return d
+}
+func CmdRunWithTimeout(cmd *exec.Cmd) {
+	time.Sleep(time.Second * 2)
+	done <- cmd.Wait()
+}
+func doFunc(funcName string, data []string) (rs int) {
+	switch funcName {
+	case "setTemplate":
+		setTemplate(data)
+	case "checkCname":
+		rs := checkCname(data)
+		return rs
+	}
+	return
+}
+func handleConnection(conn net.Conn) {
+
+	buffer := make([]byte, 2048)
+	n, err := conn.Read(buffer)
+	res := &Response2{}
+	json.Unmarshal([]byte(string(buffer[:n])), &res)
+	function := res.Func
+	rs := doFunc(function, res.Data)
+	if err != nil {
+		Log(conn.RemoteAddr().String(), " connection error: ", err)
+	} else {
+		if rs == 1 {
+			conn.Write([]byte("1"))
+		} else {
+			conn.Write([]byte("0"))
+		}
+	}
+
+	//Log(conn.RemoteAddr().String(), "receive data string:\n", string(buffer[:n]))
+	conn.Close()
+
+}
+func Log(v ...interface{}) {
+	log.Println(v...)
+}
+
+func CheckError(err error) {
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Fatal error: %s", err.Error())
+		os.Exit(1)
+	}
+}

@@ -1,0 +1,4 @@
+[socket]
+ip="127.0.0.1"
+port = 1935
+cli_file="/var/www/git/fenxiaos/app/cli.php"

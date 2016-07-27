@@ -1,0 +1,60 @@
+<?php $this->partial("common/header"); ?>
+<div class="main_box">
+			<?php $this->partial("faq/common"); ?>
+			<div class="right main">
+		<div class="main_title">
+			<span><?php $type = $this->request->getQuery('type');$typeList = \core\Config::item('faqType')->toArray();echo isset($typeList[$type]) && $typeList[$type]? $typeList[$type]: '搜索结果';?></span>
+		</div>
+		<div class="container">
+			<div class="help_search_box">
+				<div class="help_search">
+				<form action="<?php echo $this->url->get('faq/index');?>" method="get" name="faq_search" id="faq_search" >
+					<input class="help_search_inp" type="text" name="keyWord" id="key_word" value="<?php echo $this->request->getQuery('keyWord');?>"/>
+					<input type="button" class="help_search_btn" value="搜 索" id="search_btn" />
+				</form>
+				</div>
+				<p class="common_use">
+					<label>热门搜索：</label><a href="<?php echo $this->url->get('faq/index', array('keyWord' => '米掌柜'));?>">米掌柜</a><a href="<?php echo $this->url->get('faq/index', array('keyWord' => '米客'));?>">米客</a><a
+						href="<?php echo $this->url->get('faq/index', array('keyWord' => '推广'));?>">推广</a><a href="<?php echo $this->url->get('faq/index', array('keyWord' => '佣金'));?>">佣金</a>
+				</p>
+			</div>
+			<div class="nom_problem_box">
+				<h3>常见问题：</h3>
+				<ul class="nom_problem_ul">
+						<?php
+						if(! $isEmpty):
+							foreach($faqList as $faq):
+								?>
+							<li><a href="<?php echo $this->url->get('faq/detail/'.$faq->Id);?>" target="_blank"><?php echo $faq->Title;?></a></li>
+						<?php
+							endforeach;
+						else:
+							echo '<li style="text-align: center;">暂无回答，请咨询客服</li>';
+						endif;
+						?>
+				</ul>
+			</div>
+			<div class="page_box clearfix">
+				<div class="right"><?php echo $pageLink;?></div>
+			</div>
+		</div>
+	</div>
+</div>
+<script type="text/javascript">
+	$(function(){
+		$('#key_word').focus();
+		var url='<?php echo $this->url->get('faq/index',array('type'=>$this->request->getQuery('type')));?>';
+		navLight(url,url,'javascript:void(0)');
+		$('#search_btn').click(function(){
+			var keyWord = $('#key_word').val();
+			if('' == keyWord)
+			{
+				alert('请输入搜索关键字');
+				return false;
+			}
+			
+			$('#faq_search').submit();
+		});
+	});
+</script>
+<?php $this->partial("common/footer"); ?>

@@ -1,0 +1,156 @@
+<?php if($data){?>
+<body></body>
+<script>
+var text=<?php echo json_encode($data)?>;
+var css=<?php echo json_encode($data['html']['html']['css'])?>;
+var pos_id=<?php echo $posId;?>;
+function loadCss(cssString) {
+	var style = document.createElement("style");
+	style.setAttribute("type", "text/css");
+
+	if (style.styleSheet) {// IE
+		style.styleSheet.cssText = cssString;
+	} else {// w3c
+		var cssText = document.createTextNode(cssString);
+		style.appendChild(cssText);
+	}
+
+	var heads = document.getElementsByTagName("head");
+	if (heads.length)
+		heads[0].appendChild(style);
+	else
+		document.documentElement.appendChild(style);
+
+}
+function creatHtml(text) {
+	if (text) {
+		var html = text.html.html.head;
+		switch (parseInt(text.agenttype)) {
+		case 1:
+			for ( var i = 0; i < text.data.data.length; i++) {
+				var tmp = text.html.html.content.replace('{Name}',
+						text.data.data[i].DomainName);
+				tmp = tmp.replace('{SimpleDec}',text.data.data[i].SimpleDec);
+				tmp = tmp.replace('{Price}',text.data.data[i].Price);
+				tmp = tmp.replace('{FinishTime}',text.data.data[i].FinishTime);
+				if (parseInt(text.PlatformType) == 2) {
+					if (i == 0) {
+						tmp = tmp.replace('{First}', ' domain-item-first');
+					} else {
+						tmp = tmp.replace('{First}', '');
+					}
+				}
+				html += tmp.replace('{Url}', text.data.url[i]);
+			}
+			break;
+		case 2:
+			for ( var i = 0; i < text.data.data.length; i++) {
+				var tmp = text.html.html.content.replace('{Name}',
+						text.data.data[i].Name);
+				tmp = tmp.replace('{SimpleDec}', text.data.data[i].Notice);
+				if (parseInt(text.PlatformType) == 2) {
+					if (i == 0) {
+						tmp = tmp.replace('{First}', ' domain-item-first');
+					} else {
+						tmp = tmp.replace('{First}', '');
+					}
+				}
+				html += tmp.replace('{Url}', text.data.url[i]);
+			}
+			break;
+		}
+		html += text.html.html.end;
+		return html;
+	}
+	return '';
+}
+var total_domain_item = '';
+var domain_item_width = '';
+var cur_left_domain_item_index = 1;
+var domain_show_every_time = '';
+function left() {
+	total_domain_item = document.getElementById('ename-domain').childNodes.length;
+	domain_item_width = getClass("div", "domain-item")[0].clientWidth,
+			domain_show_every_time = parseInt(getClass("div",
+					"domain-navigation")[0].clientWidth
+					/ domain_item_width);
+	if (cur_left_domain_item_index === 1)
+		return;
+	cur_left_domain_item_index -= 1;
+	changeClass((cur_left_domain_item_index - 1), total_domain_item);
+	var margin_left = (cur_left_domain_item_index - 1) * domain_item_width;
+	document.getElementById('ename-domain').style.marginLeft = '-'
+			+ margin_left + 'px';
+};
+
+function right() {
+	total_domain_item = document.getElementById('ename-domain').childNodes.length;
+	domain_item_width = getClass("div", "domain-item")[0].clientWidth,
+			domain_show_every_time = parseInt(getClass("div",
+					"domain-navigation")[0].clientWidth
+					/ domain_item_width);
+	if ((cur_left_domain_item_index + domain_show_every_time - 1) >= total_domain_item
+			|| total_domain_item <= domain_show_every_time)
+		return;
+	cur_left_domain_item_index += 1;
+	changeClass((cur_left_domain_item_index - 1), total_domain_item);
+
+	var margin_left = (cur_left_domain_item_index - 1) * domain_item_width;
+	document.getElementById('ename-domain').style.marginLeft = '-'
+			+ margin_left + 'px';
+}
+function changeClass(cur_index, total_domain_item) {
+	for ( var i = 0; i < total_domain_item; i++) {
+		if (i == cur_index) {
+			addClass(getClass("div", "domain-item")[i], 'domain-item-first')
+		} else {
+			removeClass(getClass("div", "domain-item")[i], 'domain-item-first')
+		}
+	}
+}
+function getClass(tagName, className) {  //第一个参数 表示是className是所属那个dom标签下,这样为了提高检索效率
+    //如果是火狐择调用火狐的getElementsByClassName 内置函数
+    if (document.getElementsByClassName) {
+        return document.getElementsByClassName(className)
+    }
+    else {
+        var nodes = document.getElementsByTagName(tagName),
+        ret = []
+        for (i = 0; i < nodes.length; i++) {
+            if (hasClass(nodes[i], className)) { ret.push(nodes[i]) }
+        }
+        return ret;
+    }
+}
+function hasClass(obj, cls) {
+	return obj.className.match(new RegExp('(\\s|^)' + cls + '(\\s|$)'));
+}
+
+function addClass(obj, cls) {
+	if (!this.hasClass(obj, cls))
+		obj.className += " " + cls;
+}
+
+function removeClass(obj, cls) {
+	if (hasClass(obj, cls)) {
+		var reg = new RegExp('(\\s|^)' + cls + '(\\s|$)');
+		obj.className = obj.className.replace(reg, ' ');
+	}
+}
+function exportHtml(html, type) {
+	var oDiv = document.createElement('div');
+	oDiv.innerHTML = html;
+	document.body.appendChild(oDiv);
+	if (parseInt(type) == 2) {
+		total_domain_item = document.getElementById('ename-domain').childNodes.length;
+				domain_item_width = getClass("div", "domain-item")[0].clientWidth,
+				document.getElementById('ename-domain').style.width = (total_domain_item* domain_item_width + domain_item_width)+ 'px';
+	}
+}
+loadCss(css);
+html=creatHtml(text);
+exportHtml(html,text.PlatformType);
+</script>
+<?php }else{?>
+<div style="border:1px solid red;" ><span>内容获取失败</span></div>
+<?php }?>

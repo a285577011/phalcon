@@ -1,0 +1,65 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title><?php echo isset($title) && $title?$title.'-':'';?>域名联盟:域名推广,域名分销,域名展示页:ename.com.cn</title>
+		<meta name="keywords" content="域名推广,域名分销,域名展示页,域名查询,域名停放,域名联盟,易名网,厦门易名科技有限公司,易名中国,eName">
+		<meta name="description" content="域名联盟致力于打造域名生态闭环,为用户提供域名注册,域名交易,域名推广,域名查询,域名中介,域名展示页等服务">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"> 
+		<script type="text/javascript" src="/js/jquery-1.11.3.min.js"></script>
+		<script type="text/javascript" src="/js/common.js" ></script>
+		<script type="text/javascript" src="/js/page.js"></script>
+		<link rel="stylesheet" type="text/css" href="/css/public.css" />
+		<link rel="stylesheet" type="text/css" href="/css/style.css" />
+		<style>
+			html,body{width:100%;height:100%;}
+		</style>
+		<!--[if IE 6]>
+		<script type="text/javascript" src="js/DD_belatedPNG.js" ></script>
+		<script type="text/javascript">
+		DD_belatedPNG.fix('.logo_img, .outsideb,.com_aside_dl dt a,.com_note li,.com_note li,.pattern_box .active i,.add_card,.success_top');
+		</script>
+		<![endif]-->
+	</head>
+	<body>
+		<div id="nav" class="nav section">
+			<div class="topnav clearfix">
+				<div class="logo left">
+					<a class="logo_img" href="<?php echo $this->url->get();?>"></a> 
+				</div>
+				<div class="menu left">
+					<ul class="menu_list">
+						<li><a class="menu_a w_70" href="/">首 页</a></li>
+						<li><a class="menu_a w_110" href="<?php echo $this->url->get('seller/search');?>">我是米掌柜</a></li>
+						<li><a class="menu_a w_95" href="<?php echo $this->url->get('agentguests/domainagent');?>">我是米客</a></li>
+						<li><a class="menu_a w_80" href="<?php echo $this->url->get('custompage/index');?>">展示页</a></li>
+						<li>
+							<a class="menu_a w_115" href="javascript:void(0)">网站导航<span class="outsideb"></span></a>
+							<ul class="down_list">
+								<li><a href="http://www.ename.net/" target="_blank">域名管理平台</a></li>
+								<li><a href="http://www.ename.com/" target="_blank">域名交易平台</a></li>
+								<li><a href="http://www.ename.cn/" target="_blank">域名门户</a></li>
+								<li><a href="http://www.dnbbs.com" target="_blank">域名论坛</a></li>
+								<li><a href="http://tm.ename.net/" target="_blank">商标注册</a></li>
+								<li><a href="<?php echo $this->url->get('faq/index',array('type'=>1));?>" target="_blank">帮助中心</a></li>
+							</ul>
+						</li>
+					</ul>
+				</div>
+				<script > var _serId = 13;</script>
+				<script type="text/javascript" src="https://my.ename.cn/cas/js/cas_ch.js"></script>
+				<script type="text/javascript">
+				<?php if(!WebVisitor::getEnameId()){?>			
+				$(document).ready(function(){
+    	cas.setIframeForLoginCheck();
+	});
+				<?php }?>
+				</script>
+				<div class="login_box right" id="headhtml">
+					<?php if(isset($enameId) && $enameId):?><a id="users" href="<?php echo $this->url->get('user/finance');?>"><?php echo $enameId;?></a> <a id="emails" href="<?php echo $this->url->get('user/message', array('status' => 3));?>">(<?php echo $messageNum;?>)</a> |
+					<a href="<?php echo $this->url->get('logout');?>">退出</a>
+					<?php else:?><a href="<?php echo \core\Config::item('cas')['casUrl'].'?sid='.\core\Config::item('cas')['sid'].'&backurl='.urlencode('http://'.$_SERVER['SERVER_NAME'].$_SERVER["REQUEST_URI"]);?>">登录</a> |
+					<a href="https://my.ename.cn/cas/register">注册</a><?php endif;?>
+				</div>
+			</div>
+		</div>

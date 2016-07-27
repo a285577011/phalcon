@@ -1,0 +1,68 @@
+<?php $this->partial('common/header');?>
+	<script type="text/javascript" src="/js/html5.js" ></script>
+	<script type="text/javascript" src="/js/sectionscroll.js" ></script>
+	<script type="text/javascript" src="/js/jquery.mousewheel.min.js" ></script>
+	<section id="section1" class="section section1">
+		<article class="sectionWrapper section1Wrapper fadeInDown">
+<div class="bot2">
+ <div class="cont">
+ <div class="bot"></div>
+ </div>
+			</div>
+		</article>
+	</section>
+	<section id="section2" class="section section2">
+		<article class="sectionWrapper section1Wrapper fadeInDown">
+			<div class="bot">
+				<div class="goto_box">
+					<img src="/images/session2_rig.png" />
+					<div class="gotobtn">
+						<span><a href="<?php echo $this->url->get('seller/search');?>"
+							style="color: white;">去发财！</a></span>
+					</div>
+				</div>
+			</div>
+			<div class="gotop"></div>
+		</article>
+	</section>
+	<section id="section3" class="section section3">
+		<article class="sectionWrapper section1Wrapper fadeInDown">
+			<div class="bot">
+				<div class="text_box">
+					<img src="/images/session3_top.png" />
+					<div class="mishibtn">
+						<a
+							href="<?php echo $this->url->get('agentguests/domainagent');?>"><span>去米市逛逛</span></a>
+					</div>
+				</div>
+			</div>
+		</article>
+		<div class="gotop"></div>
+	</section>
+	<section id="section4" class="section section4">
+		<article class="sectionWrapper section1Wrapper fadeInDown">
+				<div class="bot_box">
+ <div class="bot"><img src="/images/session4_bot.png"/></div>
+				<div class="text_box" style="margin:5% auto">
+					<img src="/images/session4_top.png" />
+					<div class="nowbtn">
+						<a href="<?php echo $this->url->get('custompage/index');?>"><span>立即体验</span></a>
+					</div>
+				</div>
+			</div>
+			<div class="ses4_text">
+				<p>展示页金装升级，模板更加高大上，</p>
+				<p>
+					新增域名推广位，互惠互利，日进斗金一点也不难~ <a href="<?php echo $this->url->get('index/topic2');?>">查看详情></a>
+				</p>
+			</div>
+			<div class="gotop"></div>
+		</article>
+	</section>
+<script type="text/javascript">
+	$('.gotop').click(function(){
+		$('body,html').animate({scrollTop:0},1000);
+		return false;
+	});
+</script>
+	<?php $this->partial("common/footer"); ?>

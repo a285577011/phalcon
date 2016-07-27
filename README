@@ -1,0 +1,16 @@
+about phpunit
+
+cd tests && ./phpunit
+
+
+关于多语言
+
+如果不需要多语言支持 删除 ControllerBase.php 的$this->setLang(); 函数即可
+
+默认自动获取浏览器支持的第一个语言选项
+
+如果需要用户自己选择语言 请修改函数$this->setLang();的实现，默认预留了参数
+
+在视图中使用 \core\Lang::e('Hello');
+在控制器中使用 $this->e('Hello')
+有变量的使用方法 $this->e('My name is %name%', array('name'=> 'Peter'))

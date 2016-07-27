@@ -1,0 +1,74 @@
+<?php $this->partial('common/header');?>
+	<div class="main_box">
+	<?php $this->partial('common/headernav');?>
+		<div class="right main">
+			<div class="container">
+				<div class="domain_details_title mt10">
+					<span><?php echo $data->DomainName;?></span>
+				</div>
+				<table class="domain_details_list mt10" width="100%">
+					<colgroup>
+						<col width="16.6%" />
+						<col width="16.6%" />
+						<col width="16.6%" />
+						<col width="16.6%" />
+						<col width="16.6%" />
+						<col />
+					</colgroup>
+					<tbody>
+						<tr>
+							<td>
+								<div class="domain_details_box">
+									<p>域名价格</p>
+									<span><?php echo round($data->Price,2).'元';?></span>
+								</div>
+							</td>
+							<td>
+								<div>
+									<p>佣金比例</p>
+									<span><?php echo $data->Percent;?>%</span>
+								</div>
+							</td>
+							<td>
+								<div>
+									<p>推广状态</p>
+									<span><?php
+									
+									if($status == 6)
+									{
+										echo '推广中';
+									}
+									elseif($status == 3)
+									{
+										echo '推广结束';
+									}
+									else
+									{
+										echo '无效';
+									}
+									?></span>
+								</div>
+							</td>
+							<td>
+								<div>
+									<p>支出佣金</p>
+									<span><?php echo $status == 3? round($data->Price * $data->Percent * 0.01, 2).'元': '-';?></span>
+								</div>
+							</td>
+							<td>
+								<div class="noborder">
+									<p>被点击次数</p>
+									<span><?php echo $data->ClickNum;?></span>
+								</div>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+				<div class="com_btn_box mt20">
+					<input type="button" value="返 回" class="back_btn" onclick="window.history.go(-1);" />
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<?php $this->partial('common/footer');?>

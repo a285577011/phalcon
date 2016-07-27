@@ -1,0 +1,102 @@
+<?php $this->partial("common/header"); ?>	
+		<script type="text/javascript" src="/js/page.js"></script>
+				<script type="text/javascript" src="/js/layer/layer.min.js"></script>
+		<link rel="stylesheet" type="text/css" href="/js/layer/skin/layer.css">
+		<div class="main_box">
+<?php $this->partial("common/headernav"); ?>
+			<div class="right main">
+				<div class="com_tab_box clearfix">
+<?php $this->partial("user/commonnav"); ?>
+				</div>
+				<div class="container">
+					<div class="mt20">
+						<table class="domain_details_list mt10" width="100%">
+							<colgroup>
+								<col width="25%" />
+								<col width="25%" />
+								<col width="25%" />
+								<col />
+							</colgroup>
+							<tbody>
+								<tr>
+									<td>
+										<div>
+											<p>未结算金额</p>
+											<span><?php echo sprintf("%.2f",$data['sucessMoney']);?></span>
+										</div>
+									</td>
+									<td>
+										<div>
+											<p>收入总额<i class="have_problem" style=" margin-top: -2px;" title="已扣除10%技术服务费(试运营期间暂不收取技术服务费)"></i></p>
+											<span><?php echo sprintf("%.2f",$data['fina']->IncomeMoney);?></span>
+										</div>
+									</td>
+									<td>
+										<div>
+											<p>支出总额</p>
+											<span><?php echo sprintf("%.2f",$data['fina']->PayMoney);?></span>
+										</div>
+									</td>
+									<td>
+										<div class="noborder">
+											<p>账户余额</p>
+											<span><?php echo isset($data['fina']->Money)?sprintf("%.2f",$data['fina']->Money):"";?></span>
+										</div>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+						<table class="domain_table clearfix mt20" width="100%">
+							<colgroup>
+								<col />
+								<col width="15%"/>
+								<col width="20%"/>
+								<col width="15%"/>
+								<col width="20%"/>
+							</colgroup>
+							<thead>
+								<tr>
+									<th>时间</th>
+									<th>收支</th>
+									<th>金额</th>
+									<th>财务类型</th>
+									<th>备注</th>
+								</tr>
+							</thead>
+							<tbody>
+							<?php if(!empty($data['record'])){
+								$str="";
+								foreach ($data['record'] as $val){
+									$str.="<tr><td>{$val->CreateTime}</td>";
+									$str.="<td>{$val->MoneyTypeCn}</td>";
+									$str.="<td>".round($val->Money, 2)."元</td>";
+									$str.="<td>{$val->FinanceTypeCn}</td>";
+									$str.="<td>{$val->Remark}</td></tr>";
+
+								}
+								echo $str;
+								
+							}
+							else{
+								echo '<tr><td colspan="10" style=" text-align: center;">无查询结果</td></tr>';
+							}
+							
+							?>
+							</tbody>
+						</table>
+					</div>
+					<div class="page_box clearfix">
+					<div class="right">
+<?php echo $data['page'];?>
+					</div>
+					</div>
+				</div>
+			</div>
+		</div>
+			<script>
+	var url='<?php echo $this->url->get('User/finance');?>';
+	var left_url='<?php echo $this->url->get('User/finance');?>';
+	navLight(url,left_url);
+	$(".menu_list").find('li').removeClass('menu_curren');
+</script>
+<?php $this->partial("common/footer"); ?>

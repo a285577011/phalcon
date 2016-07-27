@@ -1,0 +1,206 @@
+<?php $this->partial("common/header"); ?>
+<script type="text/javascript" src="/js/page.js"></script>
+<script src="/js/modal/bootstrap.js"></script>
+<script type="text/javascript" src="/js/zclip/jquery.zclip.js"></script>
+<link href="/css/modal/bootstrap.css" rel="stylesheet" />
+<script src="/js/form.js"></script>
+<script type="text/javascript" src="/js/layer/layer.min.js"></script>
+		<link rel="stylesheet" type="text/css" href="/js/layer/skin/layer.css">
+
+	<div class="main_box">
+<?php $this->partial("common/headernav"); ?>
+		<div class="right main">
+<?php $this->partial("common/agentcommon"); ?>
+			<div class="container">
+			<form action='' id='doaminserach' name='doaminserach'>
+				<div class="com_search_box">
+					<table>
+						<colgroup>
+							<col width="220" />
+							<col width="300" />
+							<col />
+						</colgroup>
+						<tbody>
+							<tr>
+								<td><label class="search_lab">域 名： </label><input type="text"
+									class="com_input w_90" name="DomainName" value="<?php echo $this->request->getQuery('DomainName');?>"/>
+								</td>
+																<td><label class="search_lab">结束时间： </label><select class="com_select w_100" name="FinishTime">
+										<option value="">全部</option>
+										<?php foreach ($data['finishtime'] as $key=>$val){
+													if($this->request->getQuery('FinishTime')==$key){
+													echo "<option value={$key} selected >{$val[0]}</option>";
+												}
+												else{
+													echo "<option value={$key}>{$val[0]}</option>";
+												}
+										}?>
+								</select>
+								</td>
+								<td><label class="search_lab">分 类： </label><select
+									class="com_select w_100" name="Group">
+										<option value="">全部</option>
+										<?php foreach ($data['domaingroup'] as $key=>$val){
+												if($this->request->getQuery('Group')==$key){
+													echo "<option value={$key} selected='selected'>{$val[0]}</option>";
+												}
+												else{
+													echo "<option value={$key}>{$val[0]}</option>";
+												}
+										}?>
+								</select>
+								</td>
+							</tr>
+							<tr>
+								<td><label class="search_lab">交易类型： </label><select class="com_select w_100" name="transType">
+										<option value="">全部</option>
+										<option value="1"<?php echo $this->request->getQuery('transType')==1?'selected':null;?>>竞价</option>
+										<option value="4" <?php echo $this->request->getQuery('transType')==4?'selected':null;?>>一口价</option>
+								</select>
+								</td>
+								<td><label class="search_lab">价 格： </label><input type="text"
+									class="com_input w_80" name="StartPrice" value="<?php echo $this->request->getQuery('StartPrice');?>"/> - <input type="text"
+									class="com_input w_80" name="EndPrice" value="<?php echo $this->request->getQuery('EndPrice');?>"/>
+								</td>
+																<td style="padding-left:35px;"><input type="checkbox" value="8" name="topic"  <?php echo intval($this->request->getQuery('topic'))==8?"checked=checked":"";?>>拍卖会
+								</td>
+								<td></td>
+							</tr>
+							<tr>
+								<td><div style="position: relative;"><label class="search_lab">后 缀：  </label><select class="com_select w_100 <?php if(count($this->request->getQuery('Tld'))>=2){ echo "multiple";}?>" name="Tld[]" id="domaintld" <?php if(count($this->request->getQuery('Tld'))>=2){ echo "multiple='multiple'";}?>>
+										<option value="">全部</option>
+											<?php 
+											foreach ($data['tld'] as $key=>$val){
+												if($this->request->getQuery('Tld') && in_array($key, $this->request->getQuery('Tld'))){
+													echo "<option value={$key} selected>{$val[0]}</option>";
+												}
+												else{
+													echo "<option value={$key}>{$val[0]}</option>";
+												}
+										}?>
+								</select>
+								<?php if(count($this->request->getQuery('Tld'))>=2){?>
+								<a href="#" onclick="switchtld()" class="deletions d_suffix" id="switchtld">-</a>
+								
+								<?php }else{?>
+								<a id="switchtld" class="deletions d_suffix" onclick="switchtld()" href="#">+</a>
+								<?php }?>
+								</div>
+								</td>
+								<td><label class="search_lab">佣金比例： </label><span class="yongjin"><input type="text" class="com_input w_63" name="StartCommission" value='<?php echo $this->request->getQuery('StartCommission');?>'/>%</span> - <span class="yongjin"><input
+									type="text" class="com_input w_63" name="EndCommission" value='<?php echo $this->request->getQuery('EndCommission');?>'/>%</span>
+								</td>
+								<td></td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+				<div class="center mt20 mb20">
+					<input class="com_search_btn search_btn" type="button" value="搜 索"  onclick="check_form();"/>
+					<input class="com_search_btn ml10" type="button" value="重 置"  onclick="searchFormReset(this.form);"/>
+				</div>
+				</form>
+				<div>
+					<table class="domain_table clearfix" width="100%">
+						<colgroup>
+							<col width="3%" />
+							<col />
+							<col width="15%" />
+							<col width="10%" />
+							<col width="13%" />
+							<col width="15%" />
+							<col width="13%" />
+							<col width="10%" />
+						</colgroup>
+						<thead>
+							<tr>
+								<th><input type="checkbox" class='checkall'/></th>
+								<th>域名</th>
+								<th>简介</th>
+								<th>类型</th>
+								<th><a href="<?php echo $this->url->get('Agentguests/domainAgent',array_merge($this->request->getQuery(),array('sort'=>'price-'.$data['order']['priceSort'])));?>"> 当前价格 <?php echo $data['order']['priceSymbol'];?></a></th>
+								<th><a href="<?php echo $this->url->get('Agentguests/domainAgent',array_merge($this->request->getQuery(),array('sort'=>'finishtime-'.$data['order']['finishTimeSort'])));?>"> 剩余时间 <?php echo $data['order']['finishTimeSymbol'];?></a></th>
+								<th><a href="<?php echo $this->url->get('Agentguests/domainAgent',array_merge($this->request->getQuery(),array('sort'=>'percent-'.$data['order']['commissionSort'])));?>"> 佣金比例 <?php echo $data['order']['commissionSymbol'];?></a></th>
+								<th>操作</th>
+							</tr>
+						</thead>
+						<tbody>
+														<?php
+														if(! empty($data['list']))
+														{
+															foreach($data['list'] as $val)
+															{
+																
+																$str = '<tr><td><input type="checkbox" class="ids" value=' .$val->DomainAgentId . ' /></td>';
+																//ico_03.png
+																if($val->TransType==1){
+																	$str .= "<td><a href=".\core\Config::item('trans_ename_url')."/domain/auction/{$val->TransId} target=_blank >{$val->DomainName}</a>&nbsp;";
+																}
+																elseif($val->TransType==4){
+																	$str .= "<td><a href=".\core\Config::item('trans_ename_url')."/domain/buynow/{$val->TransId}/".intval($val->Price)." target=_blank >{$val->DomainName}</a>&nbsp;";
+																}
+																
+																if($val->Topic==8){
+																	$str .="<img title='拍卖会' alt='拍卖会' src='/images/ico_03.png' />";
+																}
+																$str .="</td>";
+																$str .= "<td>{$val->SimpleDec}</td>";
+																$str .= "<td>{$val->TransTypeCn}</td>";
+																$str .= "<td>".round($val->Price, 2)."元</td>";
+																$str .= "<td>{$val->FinishTime}</td>";
+																$str .= "<td>".round($val->Percent, 2)."%</td>";
+																$str .= '<td><input data-toggle="modals" href="#form-content" class="btn btn-primary com_btn" tag=' .$val->DomainAgentId . ' type="button" value="去推广" /></td></tr>';
+																echo $str;
+															}
+														}
+														else{
+                                    echo '<tr><td colspan="10" style=" text-align: center;">无查询结果</td></tr>';
+														}
+														?>
+						</tbody>
+					</table>
+				</div>
+					<div class="page_box clearfix">
+					<div class="left">
+						<input class="com_btn btn-primaryall" type="button" value="批量推广" />
+					</div>
+					<div class="right">
+<?php echo $data['page'];?>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<script>
+	var url='<?php echo $this->url->get('agentguests/domainagent');?>';
+	navLight(url,url,url);
+
+	function switchtld()
+	{
+	var multiple = $("#domaintld").attr('multiple');
+	if(multiple=='multiple')
+	{
+	tldSimple();
+	}
+	else
+	{
+	tldMultiple();
+	}
+	}
+	function tldSimple()
+	{
+	$("#domaintld").removeClass('multiple');
+	$("#domaintld").removeAttr('multiple');
+	$("#switchtld").empty().html("+");
+	$("#searchButton").css('text-align','');
+	}
+	function tldMultiple()
+	{
+	$("#domaintld").addClass('multiple');
+	$("#domaintld").attr('multiple', 'multiple');
+	$("#switchtld").empty().html("-");
+	$("#searchButton").css('text-align','center');
+	}
+	</script>
+<?php $this->partial("common/agentmodal"); ?>
+<?php $this->partial("common/footer"); ?>

@@ -1,0 +1,107 @@
+<?php $this->partial("common/header"); ?>
+<script type="text/javascript" src="/js/page.js"></script>
+<script src="/js/modal/bootstrap.js"></script>
+<script type="text/javascript" src="/js/zclip/jquery.zclip.js"></script>
+<link href="/css/modal/bootstrap.css" rel="stylesheet" />
+<script type="text/javascript" src="/js/layer/layer.min.js"></script>
+		<link rel="stylesheet" type="text/css" href="/js/layer/skin/layer.css">
+<script src="/js/form.js"></script>
+		<div class="main_box">
+<?php $this->partial("common/headernav"); ?>
+			<div class="right main">
+<?php $this->partial("common/agentcommon"); ?>
+				<div class="container">
+				<form action='' id='shopserach' name='doaminserach'>
+					<div class="com_search_box">
+						<table width="100%">
+							<colgroup>
+								<col width="50%"/>
+								<col />
+							</colgroup>
+							<tbody>
+								<tr>
+									<td>店 铺 名 称： <input type="text" class="com_input w_160" value='<?php echo $this->request->getQuery('ShopName');?>' name='ShopName'/> </td>
+									<td>卖家信用：<input type="text" class="com_input w_80" name='startCredit' value='<?php echo $this->request->getQuery('startCredit');?>'/> - <input type="text" class="com_input w_80" value='<?php echo $this->request->getQuery('endCredit');?>' name='endCredit'/></td>
+								</tr>
+								<tr>
+									<td>卖家好评率：<input type="text" class="com_input w_70" name='startGoodRating' value='<?php echo $this->request->getQuery('startGoodRating');?>'/> - <input type="text" class="com_input w_70" name='endGoodRating' value='<?php echo $this->request->getQuery('endGoodRating');?>'/> </td>
+									<td>佣金比例：<span class="yongjin"><input type="text" class="com_input w_63" name='StartCommission' value='<?php echo $this->request->getQuery('StartCommission');?>'/>%</span> - <span class="yongjin"><input type="text" class="com_input w_63" name='EndCommission' value='<?php echo $this->request->getQuery('EndCommission');?>'/>%</span></td>
+								</tr>
+								
+								
+							</tbody>
+						</table>
+					</div>
+					<div class="center mt20 mb20">
+						<input class="com_search_btn search_btn" type="button" value="搜 索"  onclick="check_form_shop();"/>
+						<input class="com_search_btn ml10" type="button" value="重 置"  onclick="searchFormReset(this.form);"/>
+					</div>
+					</form>
+					<div>
+						<table class="domain_table clearfix" width="100%">
+							<colgroup>
+								<col width="3%"/>
+								<col />
+								<col width="12%"/>
+								<col width="13%"/>
+								<col width="11%"/>
+								<col width="11%"/>
+								<col width="11%" />
+								<col width="8%"/>
+							</colgroup>
+							<thead>
+								<tr>
+									<th><input type="checkbox" class='checkall'/> </th>
+									<th>店铺名称</th>
+									<th><a href="<?php echo $this->url->get('Agentguests/shopAgent',array_merge($this->request->getQuery(),array('sort'=>'domainnum-'.$data['order']['domainnumSort'])));?>"> 域名数量 <?php echo $data['order']['domainnumSymbol'];?></a></th>
+									<th><a href="<?php echo $this->url->get('Agentguests/shopAgent',array_merge($this->request->getQuery(),array('sort'=>'goodrating-'.$data['order']['goodratingSort'])));?>"> 卖家好评率 <?php echo $data['order']['goodratingSymbol'];?></a></th>
+									<th><a href="<?php echo $this->url->get('Agentguests/shopAgent',array_merge($this->request->getQuery(),array('sort'=>'credit-'.$data['order']['creditSort'])));?>"> 卖家信用 <?php echo $data['order']['creditSymbol'];?></a></th>
+									<th><a href="<?php echo $this->url->get('Agentguests/shopAgent',array_merge($this->request->getQuery(),array('sort'=>'finishtime-'.$data['order']['finishtimeSort'])));?>"> 剩余时间 <?php echo $data['order']['finishtimeSymbol'];?></a></th>
+									<th><a href="<?php echo $this->url->get('Agentguests/shopAgent',array_merge($this->request->getQuery(),array('sort'=>'percent-'.$data['order']['percentSort'])));?>"> 佣金比例 <?php echo $data['order']['percentSymbol'];?></a></th>
+
+									<th>操作</th>
+								</tr>
+							</thead>
+							<tbody>
+														<?php
+														if(! empty($data['list']))
+														{
+															foreach($data['list'] as $val)
+															{
+																
+																$str = '<tr><td><input type="checkbox" class="ids" value=' .$val->ShopAgeId . ' /></td>';
+																$str .= "<td><a href=http://{$val->EnameId}.shop.ename.com target=_blank >{$val->Name}</a></td>";
+																$str .= "<td>{$val->DomainNum}</td>";
+																$str .= "<td>".($val->GoodRating/100)."%</td >";
+																$str .= "<td>{$val->Credit}</td>";
+																$str .= "<td>{$val->FinishTime}</td>";
+																$str .= "<td>{$val->Percent}%</td>";
+																$str .= '<td><input data-toggle="modals" href="#form-content" class="btn btn-primary com_btn" tag=' .$val->ShopAgeId . ' type="button" value="去推广" /></td></tr>';
+																echo $str;
+															}
+														}
+														else{
+															echo '<tr><td colspan="10" style=" text-align: center;">无查询结果</td></tr>';
+														}
+														?>
+							
+							</tbody>
+						</table>
+					</div>
+					<div class="page_box clearfix">
+						<div class="left"><input class="com_btn btn-primaryall" type="button" value="批量推广" /></div>
+					<div class="right">
+<?php echo $data['page'];?>
+					</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	<script>
+	var url='<?php echo $this->url->get('Agentguests/shopAgent');?>';
+	var left_url='<?php echo $this->url->get('Agentguests/domainAgent');?>';
+	navLight(url,left_url,left_url);
+</script>
+<?php $this->partial("common/agentmodal"); ?>
+
+<?php $this->partial("common/footer"); ?>

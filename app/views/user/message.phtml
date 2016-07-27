@@ -1,0 +1,174 @@
+<?php $this->partial("common/header"); ?>
+<script type="text/javascript">
+$(function(){
+	$('.clearfix').find('a[href="<?php echo $this->url->get('user/message', array('status' => $this->request->getQuery('status')) );?>"]').closest('li').addClass(
+		'active');
+});
+
+function getMsgContent(messageId)
+{
+	var ids = [];
+	var status = <?php echo $this->request->get('status');?>;
+
+	if(!messageId)
+	{
+		layer.msg('系统繁忙，请稍后再试',{icon: 2});
+	}
+	ids.push(messageId);
+	if($("#messageArea"+messageId).css('display')=='none') {
+		if(status == 5) {
+		   $("#messageArea"+messageId).toggle();
+		} else {
+			$.ajax({
+				type: "POST",
+				url: "<?php echo $this->url->get('user/editMsg');?>",
+	         timeout:20000,
+				data: {'messageId': ids, 'status' : 4 },
+				success: function(data){
+					if(data.status == true) {
+						$("#messageArea"+messageId).toggle();
+					}
+	            },
+				error:function(){
+					$("#messageContent"+messageId).html('系统忙，请稍后重试!');
+				}
+			});
+	    }
+	} else {
+		$("#messageArea"+messageId).toggle();
+	}
+}
+
+function editMsg(status) {
+	var checkObj = $('.select_domain');
+	var ids = [];
+
+	for(var i=0;i<checkObj.length;i++)
+	{
+		if(!checkObj[i].checked)
+		{
+			continue;
+		}
+		ids.push(checkObj[i].value);
+	}
+	
+	if(ids.length == 0) {
+		alert('请先选择您要操作的消息！');
+		return false;
+	}
+	
+	$.ajax({
+		url: '<?php echo $this->url->get('user/editMsg');?>',
+		type: 'post',
+		dataType: 'json',
+		data: {'messageId' : ids, 'status' : status},
+		success: function(data){
+			if(data.status == true) {
+				var oldLimit = parseInt(getUrlParam("limit_start"));
+				var newLimit = parseInt(getUrlParam("limit_start")) - <?php echo \core\Config::item('cpagesize');?>;
+				var oldStr = "limit_start=" + oldLimit;
+				var newStr = oldLimit ? "limit_start=" + newLimit : "";
+
+				layer.msg('操作成功',{icon: 1});
+				setTimeout( function(){
+					if(ids.length >= <?php echo count($messageList);?> && <?php echo intval($isLast);?> == 1) {
+						window.location.href = document.location.href.replace(oldStr, newStr);
+					} else {
+						window.location.reload();
+					}
+				}, 500);
+			} else {
+				layer.msg('操作失败，请重试',{icon: 2});
+			}
+		}
+	});
+}
+</script>
+<script type="text/javascript" src="/js/layer/layer.min.js"></script>
+<link rel="stylesheet" type="text/css" href="/js/layer/skin/layer.css">
+<div class="main_box">
+<?php $this->partial("common/headernav"); ?>
+		<div class="right main">
+		<div class="com_tab_box">
+			<ul class="clearfix">
+				<li><a
+					href="<?php echo $this->url->get('user/message', array('status' => 3));?>">未读消息</a></li>
+				<li>|<a
+					href="<?php echo $this->url->get('user/message', array('status' => 4));?>">已读消息</a></li>
+				<li>|<a
+					href="<?php echo $this->url->get('user/message', array('status' => 5));?>">回收站</a></li>
+			</ul>
+
+		</div>
+		<div class="container">
+			<div class="">
+				<form method="post" name="msg_status" id="msg_status" action="">
+					<table class="domain_table clearfix" width="100%">
+						<colgroup>
+							<col />
+							<col width="15%" />
+							<col width="55%" />
+							<col width="25%" />
+						</colgroup>
+						<tbody>
+							<tr>
+								<td><input type="checkbox" class="all_checked"
+									onclick="allChecked(this)" <?php if($this->request->getQuery('status') == 5):?>disabled="disabled"<?php endif;?>/></td>
+								<td>状态</td>
+								<td>标题</td>
+								<td>时间</td>
+							</tr>
+					<?php
+					
+					if(! $isEmpty)
+					{
+						foreach($messageList as $message)
+						{
+							?>
+							<tr>
+								<td><input type="checkbox" name="messageId"
+									class="select_domain" onclick="isAllChecked();"
+									value="<?php echo $message['MessageId'];?>" <?php if($this->request->getQuery('status') == 5):?>disabled="disabled"<?php endif;?> />
+								</td>
+								<td><?php if($message['Status'] == 3):echo '未读';elseif($message['Status'] == 4): echo '已读';elseif($message['Status'] == 5): echo '回收站';endif;?></td>
+								<td><a
+									href="javascript:getMsgContent(<?php echo $message['MessageId'];?>)"><?php echo $message['Title'];?></a></td>
+								<td><?php echo $message['SendTime'];?></td>
+							</tr>
+							<tr style="display: none; background-color: #f6fafc;"
+								id="messageArea<?php echo $message['MessageId'];?>">
+								<td colspan="4"><?php echo $message['Content'];?></td>
+							</tr>
+				<?php
+						}
+					}
+					else
+					{
+						?>
+							<tr>
+								<td colspan="4" style=" text-align: center;">无查询结果</td>
+							</tr>
+			<?php }?>
+					</tbody>
+					</table>
+				</form>
+			</div>
+			<div class="page_box clearfix">
+			<?php if(! $isEmpty):?>
+				<div class="left">
+					<?php if($this->request->getQuery('status') == 3){?><input class="com_btn" type="button" value="标为已读"
+						onclick="editMsg(4)" />
+					<?php }?>
+					<?php if($this->request->getQuery('status') != 5){?>
+					<input class="com_btn" type="button"
+						value="删除" onclick="editMsg(5)" />
+					<?php }?>
+				</div>
+			<?php endif;?>
+				<div class="right"><?php echo $pageLink;?></div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<?php $this->partial("common/footer"); ?>

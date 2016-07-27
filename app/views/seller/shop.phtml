@@ -1,0 +1,364 @@
+<?php
+$this->partial('common/header');
+?>
+<script type="text/javascript" src="/js/pickerDateRange/dateRange.js"></script>
+<script type="text/javascript">
+function errorFuc(img){
+	img.src = "/images/shop_icon.jpg";
+	img.onerror = null;
+}
+
+// 修改/重新设置
+function resetShop(id, flag) {
+	var url = '';
+	var successFun;
+	if(flag == true) {
+		url = "<?php echo $this->url->get('seller/editshop');?>"
+	}else {
+		url = "<?php echo $this->url->get('seller/shopagent');?>";
+	}
+	if(flag == true) {
+		successFun = function(data){
+			if(data.flag == false) {
+				alert(data.data);
+				return false;
+			} else {
+				renderShop(data.data, id, url);
+			}
+		};
+	} else {
+		successFun = function(data){
+			switch(data.flag) {
+				case 1:
+					if(confirm('店铺处于关闭状态，现在去开启？')) {
+						openWin("http://my.ename.com/shop/myShopInfo");
+					}
+					break;
+				case 2:
+					renderShop('', id, url);
+					break;
+				case 3:
+					if(confirm('获取信息失败，请确认店铺是否开启')) {
+						openWin("http://my.ename.com/shop/myShopInfo");
+					}
+					break;
+				default:
+					break;
+			}
+// 			if(data.flag == 1) {
+// 				if(confirm('店铺处于关闭状态，现在去开启？')) {
+// 					openWin("http://my.ename.com/shop/myShopInfo");
+// 				}
+// 				return false;
+// 			} else if(data.flag == 2){
+// 				renderShop('', id, url);
+// 			} else if(data.flag == 3) {
+// 				if(confirm('获取信息失败，请确认店铺是否开启')) {
+// 					openWin("http://my.ename.com/shop/myShopInfo");
+// 				}
+// 			}
+		};
+	}
+	
+	$.ajax({
+		url: url,
+		datatype: 'json',
+		type: 'post',
+		data: {'id' : id},
+		success: successFun
+	});
+}
+
+// 修改/重新设置html
+function renderShop(shopInfo, id, url) {
+	var html = '';
+	var percent = shopInfo != ''? shopInfo.percent: '';
+	html = '<form method="post" action="'+url+'" id="shop_form"><label>设置佣金比例：<span class="scale_box"><input type="text"'+
+	'name="percent" class="scale_input" value="'+percent+'" />%</span>'+
+	'</label> <label class="clearfix"><span class="left">设置推广时间：</span>'+
+	'<div class="left">'+
+		'<div class="ta_date" id="div_date_demo3">'+
+		'<span class="date_title" id="date_demo3"></span>'+
+			'<input type="hidden" value=""'+
+				'name="startDate"> <input type="hidden"'+
+				'value=""'+
+				'name="endDate"> <a class="opt_sel" id="input_trigger_demo3"'+
+				'href="#"> <i class="i_orderd"></i>'+
+			'</a>'+
+		'</div>'+
+	'</div></label><label><input type="checkbox" name="agreement" id="service-agr" value="1" />请勾选并同意<a href="<?php echo $this->url->get('faq/detail/53');?>">《域名联盟推广服务协议》</a></label><label><input type="hidden" name="id" value="'+ id +'" />'+
+	'<a class="com_search_btn search_btn" onclick="checkForm()">完成</a>&nbsp;&nbsp;&nbsp;<a class="com_search_btn" onclick="backFun('+id+');">取消</a></label></form>';
+	
+	$('#status').remove();
+	$('#set_scale').next().next().next().remove();
+	$('#set_scale').next().next().remove();
+	$('#set_scale').next().remove();
+	$('#set_scale').remove();
+	$('p#note').after(html);
+	$('.scale_box .scale_input').focus();
+	setDateRange(shopInfo.startDate, shopInfo.endDate);
+}
+
+function setDateRange()
+{
+	var today = arguments[0]? arguments[0]: getDays(0);
+	var minDays = arguments[1]? arguments[1]: getDays(+15);
+	$('input[name="startDate"]').val(today);
+	$('input[name="endDate"]').val(minDays);
+	var defaultStartDate=today;
+	var defaultendDate='<?php echo $this->request->getQuery('endDate');?>'?'<?php echo $this->request->getQuery('endDate');?>':minDays;
+	var dateRange = new pickerDateRange('date_demo3', {
+		isTodayValid : true,
+		startDate : defaultStartDate,
+		endDate : defaultendDate,
+		stopToday : false,
+		defaultText : ' 至 ',
+		inputTrigger : 'input_trigger_demo3',
+		theme : 'ta',
+		success : function(obj) {
+			var start = new Date(obj.startDate);
+			var now = new Date(today);
+			var end = new Date(obj.endDate);
+			var min = new Date(minDays);
+			var startTime = start.getTime();
+			var todayTime = now.getTime();
+			var endTime = end.getTime();
+			var minTime = min.getTime();
+			
+			if(startTime != todayTime)
+			{
+				alert('请选择从今天开始的时间');
+			}
+
+			if(endTime < minTime)
+			{
+				alert('至少选择15天');
+				obj.startDate = getDays(0);
+				obj.endDate = getDays(+15);
+				$('#date_demo3').html(obj.startDate +' 至 ' + obj.endDate);
+			}
+			
+			$('input[name="startDate"]').val(obj.startDate);
+			$('input[name="endDate"]').val(obj.endDate);
+		}
+	});
+}
+
+// 取消修改/重新设置
+function backFun(id) {
+	$.ajax({
+		url: "<?php echo $this->url->get('seller/check');?>",
+		datatype: 'json',
+		type: 'post',
+		data: {'id' : id},
+		success: function(data){
+			if(data.flag == false) {
+				alert('并未设置推广店铺');
+				return false;
+			} else {
+				var shopInfo = data.shopInfo;
+				var html = '';
+				var status = '';
+				if(shopInfo.Status == 1) {
+					if(shopInfo.IsEdit) 
+						status = '未生效';
+					else 
+						status = '正在推广当中';
+				} else if(shopInfo.Status == 2) {
+					status = '暂停';
+				}else if(shopInfo.Status == 3) {
+					status = '推广过期';
+				}
+				$('#shop_form').remove();
+				
+				html += '<label id="status">状态：'+status+'</label>';
+				html += '<label class="set_scale" id="set_scale">佣金比例：<strong>'+shopInfo.Percent+'</strong>%</label>';
+				html += shopInfo.Status == 1 ? '<label id="set_time">剩余推广时间：<strong>'+shopInfo.FinishTime+'</strong></label>' : '';
+				html += shopInfo.Status == 1 && shopInfo.DomainNum <= 0? '<label><span class="warm">店铺里没有域名不会进入米市，请先去上架几个域名吧！</span></label>': '';
+				if(shopInfo.Status == 1 && shopInfo.IsEdit == true) {
+					html += '<label><a href="javascript:void(0);" onclick="resetShop('+shopInfo.ShopAgeId+',true)" class="com_search_btn search_btn">修改</a>'+
+							'&nbsp;&nbsp;&nbsp;<a href="javascript:void(0);" onclick="deleteShop('+shopInfo.ShopAgeId+');" class="com_search_btn">删除</a></label>';
+				} else if(shopInfo.Status == 3) {
+					 html += '<label><a href="javascript:void(0);" onclick="resetShop('+shopInfo.ShopAgeId+',false);" class="com_search_btn search_btn">重新设置</a></label>';
+				}
+				$('p#note').after(html);
+			}
+		}
+	});
+}
+
+// 设置店铺佣金比例
+function checkForm() {
+	var percent = $('.scale_input').val();
+	var reg = new RegExp('^[1-9][0-9]?$');
+	var isAgree = $('#service-agr').prop('checked');
+	if(!reg.test(percent))
+	{
+		alert('请输入1到99的整数！');
+		return false;
+	}
+	if(percent == '')
+	{
+		alert('请先设置佣金比例');
+		return false;
+	}
+	if(true != isAgree) {
+		alert('请勾选并同意《域名联盟推广服务协议》');
+		return false;
+	}
+	if(!confirm("确定设置佣金比例为" + percent+'%？'))
+	{
+		return false;
+	}
+
+	$('#shop_form').submit();
+	
+}
+
+// 删除店铺佣金比例
+function deleteShop(agentId)
+{
+	if(!confirm('确定要删除您设置的佣金比例吗？'))
+	{
+		return false;
+	}
+
+	$.ajax({
+		url: "<?php echo $this->url->get('seller/deleteShop');?>",
+		datatype: 'json',
+		type: 'post',
+		data: {'agentId' : agentId},
+		success: function(data){
+			if(data.status == false)
+			{
+				alert(data.msg);
+				return false;
+			}
+			else
+			{
+				window.location.reload();
+			}
+		}
+	});
+}
+
+$(function(){
+	setDateRange();
+	navLight("<?php echo $this->url->get('seller/shop');?>", "<?php echo $this->url->get('seller/search');?>", "<?php echo $this->url->get('seller/search');?>");
+});
+</script>
+<link rel="stylesheet" type="text/css"
+	href="/js/pickerDateRange/dateRange.css" />
+<div class="main_box">
+			<?php $this->partial('common/headernav');?>
+			<div class="right main">
+		<div class="com_tab_box">
+			<ul class="clearfix">
+				<li><a href="<?php echo $this->url->get('seller/search');?>">发域名</a></li>
+				<li class="active">|<a href="#">发店铺</a></li>
+			</ul>
+		</div>
+		<div class="container">
+		<?php
+		
+		if($status == 2)
+		:
+			?>
+			<div class="no_open">
+				<img src="/images/noopen.jpg" /> 您还没有开通店铺，<a
+					href="http://my.ename.com/shop/myShopInfo" target="_blank">立即去开通！</a>
+			</div>
+		
+		<?php
+		else
+		:
+			?>
+			<div class="shop_list">
+				<table>
+					<colgroup>
+						<col width="23%" />
+						<col />
+					</colgroup>
+					<tbody>
+						<tr>
+							<td style="vertical-align: top; padding-left: 40px;"><img
+								src="<?php echo $data['Logo']? $data['Logo']: '/images/shop_icon.jpg';?>"
+								class="mt15" alt="店铺Logo" onerror="errorFuc(this)" /></td>
+							<td style="padding-left: 15px;">
+								<div>
+									<h3>
+										店铺名称：<a href="http://my.ename.com/shop/myShopInfo"
+											title="设置店铺" target="_blank"><?php echo $data['Name'];?></a>
+									</h3>
+									<p id="note">简介：<?php echo $data['Notice'];?></p>
+									<?php
+								if($status == 3)
+								{
+									echo $this->tag->form(array("seller/shopAgent",'method'=> 'post','id'=> 'shop_form'));
+									?>
+									
+									<label>设置佣金比例：<span class="scale_box"><input type="text"
+											name="percent" class="scale_input" id="scale" />%</span>
+									</label> <label class="clearfix"><span class="left">设置推广时间：</span>
+										<div class="left">
+											<div class="ta_date" id="div_date_demo3">
+												<span class="date_title" id="date_demo3"></span> <input
+													type="hidden"
+													value='<?php echo $this->request->getQuery('startDate');?>'
+													name="startDate"> <input type="hidden"
+													value='<?php echo $this->request->getQuery('endDate');?>'
+													name="endDate"> <a class="opt_sel" id="input_trigger_demo3"
+													href="#"> <i class="i_orderd"></i>
+												</a>
+											</div>
+										</div> </label>
+										<label><input type="checkbox" name="agreement" id="service-agr" value="1" />请勾选并同意<a href="<?php echo $this->url->get('faq/detail/53');?>">《域名联盟推广服务协议》</a></label>
+										<label><a class="com_search_btn search_btn" onclick="checkForm()" style="margin-left:130px;margin-top: 15px;">完成</a></label>
+						<?php
+									echo $this->tag->endForm();
+								}
+								elseif($status == 1)
+								{
+								?>
+									<label id="status">状态：<?php if($data['Status'] == 1):echo $data['IsEdit']? '未生效': '正在推广当中';elseif ($data['Status'] == 2):echo '暂停';elseif ($data['Status'] == 3):echo '推广过期';endif;?></label>
+									<label class="set_scale" id="set_scale">佣金比例：<strong><?php echo $data['Percent'];?></strong>%
+									</label>
+							<?php if($data['Status'] == 1):?>
+									<label id="set_time">剩余推广时间：<strong><?php echo $data['LeftDate'];?></strong></label>
+									<?php if($data['DomainNum'] <= 0):echo '<label><span class="warm">店铺里没有域名不会进入米市，请先去上架几个域名吧！</span></label>';endif;?>
+									<?php endif;
+									if($data['IsEdit'] && $data['Status'] == 1):
+									?>
+									<label> <a href="javascript:void(0);"
+										onclick="resetShop(<?php echo $data['ShopAgeId'];?>,true)"
+										class="com_search_btn search_btn">修改</a>&nbsp;&nbsp;&nbsp;<a
+										href="javascript:void(0);"
+										onclick="deleteShop(<?php echo $data['ShopAgeId'];?>);"
+										class="com_search_btn">删除</a>
+									</label>
+									<?php elseif($data['Status'] == 3):?>
+									<label><a href="javascript:void(0);"
+										onclick="resetShop(<?php echo $data['ShopAgeId']?>,false);"
+										class="com_search_btn search_btn">重新设置</a></label>
+				
+							<?php
+									endif;
+								}
+							?>
+								</div>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			<div class="com_note mt20 clearfix">
+					<h3 class="com_note_tit">注意事项：</h3>
+					<ul class="com_note_list mt15">
+						<li>佣金比例在设置30分钟后生效并进入米市，生效之后佣金比例将无法进行修改和删除，直到推广时间结束。</li>
+					</ul>
+			</div>
+		<?php endif;?>
+		</div>
+	</div>
+</div>
+<?php $this->partial('common/footer');?>

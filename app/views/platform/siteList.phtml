@@ -1,0 +1,186 @@
+<?php $this->partial("common/header"); ?>	
+<script type="text/javascript" src="/js/page.js"></script>
+<script type="text/javascript" src="/js/layer/layer.min.js"></script>
+		<link rel="stylesheet" type="text/css" href="/js/layer/skin/layer.css">
+		<div class="main_box">
+<?php $this->partial("common/headernav"); ?>
+			<div class="right main">
+				<div class="com_tab_box clearfix">
+					<ul class="left">
+						<li><a href="<?php echo $this->url->get('platform/sitelist');?>">自有网站</a></li>
+						<li>|<a href="<?php echo $this->url->get('platform/otherlist');?>">其他平台</a></li>
+					</ul>
+					<div class="right com_tab_right">
+					<form action=''>
+						<input type="text" class="com_input w_150" value='<?php echo $this->request->getQuery('siteName');?>' name='siteName'/>
+						<input type="submit" class="search_btn com_search_btn ml10" value="搜 索" />
+						</form>
+					</div>
+				</div>
+<div class="container">
+					<div class="mt20">
+						<table class="domain_table clearfix" width="100%">
+							<colgroup>
+								<col width="3%"/>
+								<col width="15%"/>
+								<col width="30%"/>
+								<col width="10%"/>
+								<col />
+								<col width="15%"/>
+							</colgroup>
+							<thead>
+								<tr>
+									<th><input type="checkbox" class='checkall'/></th>
+									<th>站点名称</th>
+									<th>网址</th>
+									<th>类型</th>
+									<th>描述</th>
+									<th>&nbsp;操作</th>
+								</tr>
+							</thead>
+							<tbody>
+																					<?php
+														if(! empty($list))
+														{
+															foreach($list as $val)
+															{
+																
+																$str = '<tr><td><input type="checkbox" class="ids" value=' .$val->PlatformId . ' /></td>';
+																$str .= "<td>{$val->Name}</td>";
+																$str .= '<td>'.rawurldecode($val->Url).'</td>';
+																$str .= "<td>{$val->ClassTypeCn}</td>";
+																$str .= "<td>{$val->Description}</td >";
+																$str .= "<td class='c_gray caozuo'><a  href={$this->url->get('Platform/updateIndex',array('PlatformId'=>$val->PlatformId))}>修改</a>|<a class='ajax-get' href='javascript:void(0)' url={$this->url->get('Platform/deletePlatform',array('PlatformId'=>$val->PlatformId))}>删除</a></td></tr>";
+																echo $str;
+															}
+														}
+														else{
+															echo '<tr><td colspan="10" style=" text-align: center;">无查询结果</td></tr>';
+														}
+														?>
+							</tbody>
+						</table>
+					</div>
+					<div class="page_box clearfix">
+						<div class="left">
+							<input class="com_btn" type="button" value="新 建"  onclick="window.location.href='<?php echo $this->url->get('Platform/addSite');?>'"/>
+							<input class="com_btn ml10" type="button" value="删 除"  onclick='deleteSite();'/>
+						</div>
+						<div class="right">
+<?php echo $page;?>
+						</div>
+					</div>
+																<div class="com_note mt20 clearfix">
+	                    <h3 class="com_note_tit">注意事项：</h3>
+	                    <ul class="com_note_list mt15">
+	                        <li>推广渠道仅用于统计，各站点的推广代码并无区分，也不以此判定推广结果。</li>
+	                        <li>只要买家通过米客的推广链接进入购买，米客都可以获得佣金。</li>
+	                    </ul>
+	                </div>
+				</div>
+			</div>
+		</div>
+	<script>
+	var data_length=parseInt(<?php echo count($list);?>);
+	var now_limit=parseInt(getUrlParam("limit_start"));
+	var change_limit=now_limit?now_limit-parseInt(<?php echo \core\Config::item('pagesize');?>):0;
+	var isLastPage=parseInt(<?php echo $isLastPage;?>);
+$(function(){
+	$('.ids').prop('checked',false);
+	$('.checkall').prop('checked',false);
+	//twitter bootstrap script
+	 $(".ids").click(function(){
+			var option = $(".ids");
+			$(this).is(':checked')?$(this).attr("checked", true):$(this).attr("checked", false);
+			option.each(function(i){
+				if(!this.checked){
+					$(".checkall").prop("checked", false);
+					return false;
+				}else{
+					$(".checkall").prop("checked", true);
+				}
+			});
+	 });
+	 $('.checkall').click(function(){
+		 $(".ids").prop("checked", this.checked);
+	 });
+	 $('.ajax-get').click(function(){
+	    if(!confirm('删除后渠道统计无法获取数据，确认删除？')){
+	        return false;
+	    }
+	    target = $(this).attr('url');
+	    if(target){
+	        $.get(target).success(function(data){
+	            if (data.status==1) {
+	            	layer.msg('删除成功',{icon: 1});
+		                setTimeout(function(){
+	                        if(data_length==1){
+	                     	   window.location.href=document.location.href.replace("limit_start="+now_limit,"limit_start="+change_limit);
+	                            }
+	                        else{
+	                            location.reload();
+
+	                        }
+	                },500);
+	            }
+	            else{
+	            	layer.msg('删除失败',{icon: 2});
+	            }
+	        });
+	        }
+	 });
+})
+	function deleteSite(){
+		var PlatformId=getId();
+		if(PlatformId==''||PlatformId==undefined||PlatformId==null){
+
+			layer.msg('请选择',{icon: 2});
+return false;
+			}
+        if(!confirm('删除后渠道统计无法获取数据，确认删除？')){
+            return false;
+        }
+        $.ajax({
+            type: "POST",
+        url: "<?php echo $this->url->get('Platform/deletePlatform');?>",
+        data: {'PlatformId':PlatformId},
+        beforeSend : function(){
+       },
+                success: function(data){
+                     if(data.status==1){
+                    	 layer.msg(data.msg,{icon: 1});
+                       setTimeout(function(){
+                           if(data_length==parseInt(PlatformId.length)&&!isNaN(isLastPage)){
+                         	   window.location.href=document.location.href.replace("limit_start="+now_limit,"limit_start="+change_limit);
+                                }
+                            else{
+                                location.reload();
+
+                            }
+                       },500);
+                        }
+                     else{
+                    	 layer.msg('删除失败',{icon: 2});
+                         }        
+                },
+        error: function(){
+        	layer.msg("系统繁忙",{icon: 5});
+        }
+              });
+		}
+	 function getId(){
+	     var PlatformId=[];  
+	     $('.ids').each(function(i) {
+	         if ($(this).is(':checked')) { 
+	        	 PlatformId.push($(this).val()); 
+	         }
+	     }); 
+	     return PlatformId;
+		 }
+	</script>
+		<script>
+		var top_url='<?php echo $this->url->get('Agentguests/domainAgent');?>';
+		var url='<?php echo $this->url->get('Platform/siteList');?>';
+	navLight(url,url,top_url);
+</script>
+<?php $this->partial("common/footer"); ?>

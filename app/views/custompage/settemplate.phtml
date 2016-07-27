@@ -1,0 +1,1454 @@
+<?php $this->partial("common/header"); ?>
+		<script type="text/javascript" src="/js/ajaxfileupload.js"></script>
+		<!-- markItUp! skin -->
+<link rel="stylesheet" type="text/css" href="/plugin/markitup/skins/markitup/style.css">
+<!--  markItUp! toolbar skin -->
+<link rel="stylesheet" type="text/css" href="/plugin/markitup/sets/default/style.css">
+<!-- markItUp! -->
+<script type="text/javascript" src="/plugin/markitup/jquery.markitup.js"></script>
+<script type="text/javascript" src="/plugin/markitup/browser.js"></script>
+<!-- markItUp! toolbar settings -->
+<script type="text/javascript" src="/plugin/markitup/sets/default/set.js"></script>
+		<div class="main_box">
+			<?php $this->partial("common/headernav"); ?>
+			<div class="right main">
+				<div class="com_tab_box clearfix">
+					<ul class="left">
+						<li><a href="<?php echo $this->url->get('custompage/custompagestyle')?>">添加展示页模板</a></li>
+						<li>|<a href="<?php echo $this->url->get('custompage/templatelist')?>">展示页模板列表</a></li>
+						<li  >|<a href="<?php echo $this->url->get('custompage/addshowpage')?>">添加展示页域名</a></li>
+						<li>|<a href="<?php echo $this->url->get('custompage/index')?>">展示页域名列表</a></li>
+						<li>|<a href="<?php echo $this->url->get('custompage/settemplate');?>" onclick=" return false;">编辑模板</a></li>
+					</ul>
+				</div>
+				<form id="form1" method="post"  enctype="multipart/form-data">
+				<div class="container">
+				
+					<div class="hot mt20 mb20"><label class="hot_tip">展示页名称：</label><input type="text"  name="templateName" id="templateName" onblur="checkForm('temName')" value="<?php echo $html['info']['TemplateName']?>" class="w_400 hot_input" />
+					<em id="temNameNotice" class="ml5 c_style_red pagenotice"></em>
+					 </div>
+					<?php if($html['info']['TemplateType'] != 1){?>
+					<div class="hot mb20 clearfix">
+						<label class="hot_tip left">选择模块：</label>
+						<div class="left hot_cont mt5">
+						<p>
+						<input type="checkbox" id="diydomain" name="" /><label class="c_style_yellow">域名</label>
+						<input class="ml10" id="diydesc"  type="checkbox" id="check1" name="check1" value="1"/><label for="check1" class="c_style_yellow">域名简介</label>
+						<input class="ml10" id="diywhois"  type="checkbox" id="check2" name="check2" value="2" /><label for="check2" class="c_style_yellow">whois信息</label>
+						<input class="ml10"  id="diyerrow" type="checkbox" id="check4" name="check4" value="4" /><label for="check4" class="c_style_yellow">经纪中介</label>		
+						</p>
+						<p class="hot_tishi">勾选需要的模块，系统将自动插入编辑框，您只需添加变量代码即可</p>			
+						</div>
+					</div>
+					<?php }?>
+					<div class="gray_box">
+						<div class="muban_title muban_card clearfix"> 
+							<label class="left">米掌柜名片：</label>
+							
+							<p id="contas" class="left" style="width:570px;">							<?php 
+							if($html['contacts']){
+		foreach($html['contacts'] as $key=>$val)
+		{
+			?>
+							<span class="card" id ="<?php echo $val->UserCId;?>_card"><a href="javascript:void(0);" onclick="showcard(1,<?php echo $val->UserCId ;?>);"><?php echo $val->CardName;?> </a><a class="ml20" href="javascript:void(0);" onclick="delcard(<?php echo $val->UserCId ;?>);">X</a> </span> 
+							<?php 
+}
+}
+	?>
+	</p>
+	<a class="add_card right" href="javascript:void(0);" onclick="showcard(2,1);">新增</a>
+	</div>
+							<div id="showcard" class="contain_muban" style="display:none;">
+
+	
+						</div>
+						
+					</div>
+					<div class="gray_box pb">
+						<div class="muban_title muban_seo clearfix">
+							<label class="left">SEO：</label> 
+							
+							<p id="seos" class="left" style="width:625px;">		
+														<?php if($html['seos']){
+		foreach($html['seos'] as $key=>$val)
+		{
+			?>
+			
+							<span class="card" id ="<?php echo $val->SEOId;?>_seo"><a href="javascript:void(0);" onclick="showseo(1,<?php echo $val->SEOId ;?>);"><?php echo $val->CardName;?> </a><a class="ml20" href="javascript:void(0);" onclick="delseo(<?php echo $val->SEOId ;?>);">X</a> </span> 
+							<?php 
+}
+}
+	?>
+	</p><a class="add_card right" href="javascript:void(0);" onclick="showseo(2,1);">新增</a>
+						</div>
+						
+						<div id="showseo" class="contain_muban" style="display:none;">
+
+	
+						</div>
+					</div>
+					<div class="gray_box">
+						<div class="muban_title"><label>推广位：</label> </div>
+						<div class="pb20" style="width:670px;margin:20px auto;">
+										<select name="enameType" id="enameType" onchange="enamestat(this.value)" class="com_select w_100 ml10">
+												<option value='0'>不使用</option>
+												<option value="1" <?php echo (1== $html['info']['enameType']) ? 'selected' : ''?> ><?php echo '推广链接'?></option>
+												<option value="2" <?php echo (2== $html['info']['enameType']) ? 'selected' : ''?>><?php echo 'JS代码'?></option>
+											</select>
+											<input type="text" name="enameCode" value="<?php echo isset($html['info']['enameAdSolt']) ? $html['info']['enameAdSolt']: ''?>" id="enameCode" onblur="checkForm('enameCode')" class="text w_236">
+											<em id="enameNotice" class="ml5 c_style_red pagenotice"></em>
+											<?php if($html['info']['TemplateType'] == 1){?>
+																							<script src="/js/modal/bootstrap.js"></script>
+                                   <link href="/css/modal/bootstrap.css" rel="stylesheet" />
+                                   <script type="text/javascript" src="/js/layer/layer.min.js"></script>
+		                             <link rel="stylesheet" type="text/css" href="/js/layer/skin/layer.css">
+											<p class="mt20 ml10"><input name="getcode" data-toggle="modals" href="#form-content" class="btn btn-primary com_btn" type="button" style="width:100px;" value="获取推广码" />
+											<a target="_blank" style="font-size:12px;text-decoration:underline;" href="<?php echo $this->url->get('faq/detail/55');?>">如何获取推广码？</a></p>
+									<div id="form-content" class="modal hide fade in ie" style="display: none;">
+									<div class="pop_main" style="width:800px;margin-left:-400px;position: fixed;">	
+			<div class="pop_hd">
+				<a title="关闭" href="#" class="pop_close" data-dismiss="modal">x</a>
+				<h3>推广设置</h3>
+			</div>
+							<div class="pop_bd">
+				<div class="mt10 pb20">
+						<div class="com_search_box">
+							<table width="100%">
+								<colgroup>
+									<col width="30%"/>
+									<col width="30%"/>
+									<col />
+								</colgroup>
+								<tbody>
+									<tr>
+										<td>交易类型：<select class="com_select w_100" name="transType" id="transType">
+										<option value="0">全部</option>
+										<option value="1">竞价</option>
+										<option value="4">一口价</option>
+										
+										</select></td>
+										<td>分&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 类：<select class="com_select w_100" name="Group" id="Group">
+																			<option value="0">全部</option>
+										<?php 
+										foreach (\core\Config::item('domaingroup')->toArray() as $key=>$val){
+													echo "<option value={$key} >{$val[0]}</option>";
+													}
+													?>
+										</select> </td>
+										<td>价&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 格：<input type="text" class="com_input w_80" name="StartPrice"/> - <input type="text" class="com_input w_80" name="EndPrice"/></td>
+									</tr>
+									<tr>
+										<td>后&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 缀：<select class="com_select w_100" name="Tld" id="Tld">
+																				<option value="0">全部</option>
+											<?php foreach (\core\Config::item('tld')->toArray() as $key=>$val){
+
+													echo "<option value={$key}>{$val[0]}</option>";
+										}?>
+										</select></td>
+										<td>结束时间：<select class="com_select w_100" name="FinishTime" id="FinishTime">
+											<option value="0">全部</option>
+										<?php foreach (\core\Config::item('finishtime')->toArray() as $key=>$val){
+													echo "<option value={$key}>{$val[0]}</option>";
+										}?>
+										</select></td>
+										<td>佣金比例：<span class="yongjin"><input type="text" class="com_input w_63" name="StartCommission"/>%</span> - <span class="yongjin"><input type="text" class="com_input w_63" name="EndCommission"/>%</span></td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+				</div>
+			</div>
+			<p class="center"><input type="checkbox" name="checkAgreement" value='1'>请勾选并同意<a href="<?php echo $this->url->get('faq/detail/53');?>">《域名联盟推广服务协议》</a></p>
+			           <div class="com_btn_box mb30 mt20">
+            	<input type="button" value="推送" class="com_search_btn search_btn complete" onclick="creat_pos()"/>
+            	<input class="com_search_btn ml10" type="button" value="重 置"  onclick="FormReset();"/>
+            </div>
+				</div>
+				</div>
+				<script type="text/javascript">
+				function FormReset(){
+					$('#form-content').find(':input[type!="button"][type!="reset"][type!="submit"][type!="text"]').val(0);
+					$('#form-content').find(':input[type="text"]').val(null);
+					}
+				$('input[name="getcode"]').click(function(){
+						$('#form-content').modal({backdrop: 'static', keyboard: false}); 
+				})
+				function creat_pos(){
+					if(!check_creat_pos()){
+						return false;
+						}
+					 if(!$('input[name="checkAgreement"]').prop("checked")){
+						 layer.msg('请勾选并同意《域名联盟推广服务协议》',{icon: 5});
+						 return false;
+						  }
+				     $.ajax({
+				         type: "POST",
+				     url: "<?php echo $this->url->get('Agentguests/autoAgentFirst');?>",
+				     data: {'Tld':$('#Tld').val(),'FinishTime':$('#FinishTime').val(),'StartPrice':$('input[name="StartPrice"]').val(),'EndPrice':$('input[name="EndPrice"]').val(),'Group':$('#Group').val(),'transType':$('#transType').val(),'StartCommission':$('input[name="StartCommission"]').val(),'EndCommission':$('input[name="EndCommission"]').val(),},
+				     beforeSend : function(){
+				    },
+				             success: function(data){
+					             if(data.status==-1){
+					            	 layer.msg("无筛选结果,请重新筛选",{icon: 5});
+					             } else{
+								     $.ajax({
+								       type: "POST",
+								     url: "<?php echo $this->url->get('Agentguests/autoAgentSecond');?>",
+								     data: {'PlatformId':<?php echo $this->request->getQuery('id');?>,'StyleId':<?php echo $html['info']['StyleId'];?>,'PlatformType':2,'Tld':$('#Tld').val(),'FinishTime':$('#FinishTime').val(),'StartPrice':$('input[name="StartPrice"]').val(),'EndPrice':$('input[name="EndPrice"]').val(),'Group':$('#Group').val(),'transType':$('#transType').val(),'StartCommission':$('input[name="StartCommission"]').val(),'EndCommission':$('input[name="EndCommission"]').val(),'Agreement':1},
+								     beforeSend : function(){
+								    },
+								             success: function(data){
+$('#enameType').val(2);
+$('#enameCode').val(data[0]);
+$('#form-content').modal('hide');
+								             },
+								     error: function(){
+								     layer.msg("系统繁忙",{icon: 5});
+								     }
+								           });
+						             }    
+				             },
+				     error: function(){
+				     layer.msg("系统繁忙",{icon: 5});
+				     }
+				           });
+					}
+				function check_creat_pos(){
+					var errormsg = '';
+					var error = false;
+					var StartPrice = $('input[name="StartPrice"]').val();
+					var EndPrice = $('input[name="EndPrice"]').val();
+					var StartCommission =$('input[name="StartCommission"]').val();
+					var EndCommission = $('input[name="EndCommission"]').val();
+					if (StartPrice.length>0) {
+						if(!(/^\d+$/.test(StartPrice))){
+							error = true;
+							errormsg = '起始价格必须为整数';
+						}
+						if (isNaN(StartPrice)) {
+							error = true;
+							errormsg = '起始价格必须为数字';
+						} else if (StartPrice < 0) {
+							$('input[name="StartPrice"]').val('0');
+							error = true;
+							errormsg = '起始价格必须大于0';
+						}
+					}
+					if (EndPrice.length>0) {
+						if(!(/^\d+$/.test(EndPrice))){
+							error = true;
+							errormsg = '结束价格必须为整数';
+						}
+						if (isNaN(EndPrice)) {
+							error = true;
+							errormsg = '结束价格必须为数字';
+						} else if (parseFloat(EndPrice) < parseFloat(StartPrice)) {
+							error = true;
+							errormsg = '结束价格必须大于起始价格';
+						}
+						else if(parseFloat(EndPrice)==0){
+							error = true;
+							errormsg = '结束价格必须大于0!';
+						}
+					}
+					if (StartCommission.length>0) {
+						if(!(/^\d+$/.test(StartCommission))){
+							error = true;
+							errormsg = '起始佣金比例必须为整数';
+						}
+						if (isNaN(StartCommission)) {
+							error = true;
+							errormsg = '佣金比例必须为数字';
+						} else if (StartCommission < 0) {
+							$('input[name="StartCommission"]').val('0');
+							error = true;
+							errormsg = '佣金比例必须为0到100的整数！';
+						}
+					}
+					if (EndCommission.length>0) {
+						if(!(/^\d+$/.test(EndCommission))){
+							error = true;
+							errormsg = '结束佣金比例必须为整数';
+						}
+						if (isNaN(EndCommission)) {
+							error = true;
+							errormsg = '佣金比例必须为数字';
+						} else if (parseFloat(EndCommission) < parseFloat(StartCommission)) {
+							error = true;
+							errormsg = '结束佣金比例必须大于起始佣金比例';
+						}
+						 else if (parseFloat(EndCommission) >100) {
+								error = true;
+								errormsg = '佣金比例为0到100的整数！';
+							}
+						else if(parseFloat(EndCommission)<=0){
+							error = true;
+							errormsg = '佣金比例为0到100的整数！';
+						}
+					}
+					if (error == true) {
+						layer.msg(errormsg,{icon: 2});
+						return false;
+					}
+					return true;
+					}
+				</script>
+				<?php }?>
+						</div>	
+						
+					</div>
+					
+					<div class="gray_box">
+						<div class="muban_title"><label>广告位：</label> </div>
+						<div class="pb20">
+							<table class="ad_table" width="600px">
+								<colgroup>
+									<col width="120px" />
+									<col width="180px" />
+									<col width="120px" />
+									<col />
+								</colgroup>
+								<tbody>
+									<tr>
+										<td class="title"><input type="radio" name="adType" <?php echo (isset($html['info']['AdId']['adheight']) && 1== $html['info']['AdType']) ? 'checked' : ''?> value="1" onclick="adstat(this.value)"/><label for="google">Google:</label></td>
+									</tr>
+									<tr>
+										<td class="align_r">ad_client:</td>
+										<td><input name="pubid" type="text" id="pubid" onblur="checkForm('pubid')" value="<?php echo isset($html['info']['AdId']['pubid']) ? $html['info']['AdId']['pubid']: ''?>"  class="w_150 text"/><em id="pubidNotice" class="c_style_red pagenotice"></em></td>
+										<td class="align_r">ad_slot:</td>
+										<td><input name="slotid" type="text" id="slotid" onblur="checkForm('slotid')"  value="<?php echo isset($html['info']['AdId']['slotid']) ? $html['info']['AdId']['slotid']: ''?>" class="w_150 text"/><em id="slotidNotice" class="c_style_red pagenotice"></em></td>
+									</tr>
+									<tr>
+										<td class="align_r">ad_width:</td>
+										<td><input id="adwidth" name="adwidth" type="text" onblur="checkForm('adwidth')"  value="<?php echo isset($html['info']['AdId']['adwidth']) ? $html['info']['AdId']['adwidth']: ''?>" class="w_150 text" onblur="checkForm('adwidth')"/><em id="adwidthNotice" class="c_style_red pagenotice"></em></td>
+										<td class="align_r">ad_height:</td>
+										<td><input  id="adheight" name="adheight" type="text" onblur="checkForm('adheight')"  value="<?php echo isset($html['info']['AdId']['adheight']) ? $html['info']['AdId']['adheight']: ''?>" class="w_150 text" onblur="checkForm('adheight')" /><em id="adheightNotice" class="c_style_red pagenotice"></em></td>
+									</tr>
+									<tr>
+										<td class="title"><input type="radio" name="adType" value="2" <?php echo (isset($html['info']['AdId']) && 2== $html['info']['AdType']) ? 'checked' : ''?> onclick="adstat(this.value)"/><label for="baidu">百度:</label></td>
+										<td colspan="3"><input type="text" class="w_150 text" name="adId" id="adId" value="<?php echo (isset($html['info']['AdType'])&& 2== $html['info']['AdType'] && $html['info']['AdId'])? $html['info']['AdId']:'';?>" onblur="checkForm('adId')" /><em id="adIdNotice" class="c_style_red pagenotice"></em></td>
+										
+									</tr>
+								</tbody>
+							</table>
+						</div>	
+					</div>
+					
+					<div class="gray_box">
+						<div class="muban_title"><label>数据统计：</label> </div>
+						<div class="pb20" style="width:600px;margin:20px auto;">
+										<select name="statType" id="statType" onchange="statcode(this.value)" class="com_select w_100 ml10">
+												<option value='0'>不使用</option>
+												<?php foreach ($html['statType'] AS $k=>$v):?>
+												<option <?php echo ($k== $html['info']['StatType']) ? 'selected' : ''?>  value="<?php echo $k?>"><?php echo $v[1]?></option>
+												<?php endforeach;?>
+											</select>
+											<input type="text" name="statId" value="<?php echo isset($html['info']['StatId']) ? $html['info']['StatId']: ''?>" id="statId" onblur="checkForm('statId')" class="text w_236">
+											<em id="statIdNotice" class="ml5 c_style_red pagenotice">只填写统计代码中的数字id</em>
+						</div>	
+					</div>
+<?php if($html['info']['TemplateType'] != 1){?>
+				<div class="gray_box">
+						<div class="muban_title"><label>编辑HTML源码</label> </div>
+						<div class="border_gray pb20 pl10">
+							<p class="c_style_yellow mt20">源码规范：</p>
+							<p class="c_style_yellow mt10">1、html和css文件分别存放  2、不能上传图片，可以引用其它站点的图片 3、不允许添加js代码，不允许引用js文件</p>
+						</div>
+						<p class="sound_tip">模板变量列表：</p>
+						<table class="domain_table domain_table_gray border_gray" width="100%">
+							<colgroup>
+								<col width="15%" />
+								<col width="17%" />
+								<col width="15%" />
+								<col width="13%" />
+								<col width="12%" />
+								<col width="15%" />
+								<col />
+							</colgroup>
+							<thead>
+								<tr>
+									<th>域名</th>
+									<th>域名简介</th>
+									<th>邮箱</th>
+									<th>电话</th>
+									<th>QQ</th>
+									<th>统计代码</th>
+									<th>广告代码</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr>
+									<td>{%domain%}</td>
+									<td>{%domaindesc%}</td>
+									<td>{%email%}</td>
+									<td>{%tel%}</td>
+									<td>{%qq%}</td>
+									<td>{%codestat%}</td>
+									<td>{%codead%}</td>
+								</tr>
+							</tbody>
+							<thead>
+								<tr>
+									<th>推广代码</th>
+									<th>联系人姓名</th>
+									<th>联系人介绍</th>
+									<th>联系人头像</th>
+									<th></th>
+									<th></th>
+									<th></th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr>
+									<td>{%enamecode%}</td>
+									<td>{%linkname%}</td>
+									<td>{%linkdesc%}</td>
+									<td>{%avatarlinkurl%}</td>
+									<td></td>
+									<td></td>
+									<td></td>
+								</tr>
+							</tbody>
+						</table>
+						
+						<p class="sound_tip">域名交易信息：</p>
+						<table class="domain_table domain_table_gray border_gray" width="100%">
+							<colgroup>
+								<col width="25%" />
+								<col width="25%" />
+								<col width="25%" />
+								<col />
+							</colgroup>
+							<thead>
+								<tr>
+									<th>交易类型</th>
+									<th>当前价格</th>
+									<th>剩余时间</th>
+									<th>交易链接</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr>
+									<td>{%transtype%}</td>
+									<td>{%price%}</td>
+									<td>{%lefttime%}</td>
+									<td>{%transurl%}</td>
+								</tr>
+							</tbody>
+						</table>
+						<p class="sound_tip">下面输入框编辑的是< body >和< /body >之间的内容，请不要输入网页头部信息。</p>
+						<div class="center mt20 pb20">
+							<textarea id="htmlCode" name="htmlCode"  class="sound_textarea"><?php if($html['info']['TemplateType']==2) echo $html['templateInfo']['Html']?></textarea>
+							<em id="htmlNotice" class="c_style_red pagenotice"></em>
+						</div>
+					</div>
+					
+					<div class="gray_box">
+						<div class="muban_title"><label>编辑CSS样式</label> </div>
+						<p class="sound_tip">下面输入框编辑的是< body >和< /body >之间的内容，请不要输入JS代码。</p>
+						<div class="hot center mt20 pb20">
+							<textarea id="cssCode" name="cssCode" onblur="checkForm('css')" class="sound_textarea"><?php if($html['info']['TemplateType']==2) echo $html['templateInfo']['Css']?></textarea>
+							<em id="cssNotice" class="c_style_red pagenotice"></em>
+							<p class="hot_tishi">注：如果您不精通html和css，请使用系统风格。客服GG和MM无法解答相关的技术问题，因为他们也不懂。
+							</p>			
+						</div>
+					</div>
+				<?php }?>
+				</div>
+				<div class="center mt30 mb30">
+				<input type="hidden" name="Seoid" id="Seoid" value="<?php if(isset($html['info']['Seoid'])){echo $html['info']['Seoid'];} ?>" />
+				<input type="hidden" name="Ucid" id="Ucid" value="<?php if(isset($html['info']['Ucid'])){echo $html['info']['Ucid'];} ?>" />
+				<input type="hidden" name="templateid" id="templateid" value="<?php if(isset($html['info']['StyleId'])){echo $html['info']['StyleId'];} ?>" />
+				<input type="hidden" name="typeid" id="typeid" value="<?php if(isset($html['info']['TemplateType'])){echo $html['info']['TemplateType'];} ?>" />
+				<input type="hidden" name="dataid" id="dataid" value="<?php if(isset($html['info']['TemplateDId'])){echo $html['info']['TemplateDId'];} ?>" />
+					<input class="com_search_btn search_btn submit_btn" type="button" onclick="addtemplate(this); return false;" value="修改模板" />
+					<input class="com_search_btn ml10 submit_btn" type="button" onclick = "modelview();"value="预 览" />
+				</div>
+				</form>
+			</div>
+		</div>
+<script type="text/javascript">
+	var diydomain = true;
+	var diydomaindesc = true;
+	var diywhois = true;
+	var diyerrow = true;
+	var diytrans = true;
+	var enameflag = true;
+	var statflag = true;
+	var adflag = true;
+	var csshtml = $('#cssCode').html();
+	$(document).ready(function(){
+		var lseoid = $('#Seoid').val();
+		if(lseoid)
+		{
+			$('#'+ lseoid + '_seo').addClass('cur');
+		}
+		var lucid = $('#Ucid').val();
+		if(lucid)
+		{
+			$('#'+ lucid + '_card').addClass('cur');
+		}
+	$('#htmlCode').markItUp(mySettings);
+	var $div_li =$("div.muban_title p span");
+	$div_li.click(function(){
+		$(this).addClass("cur").siblings().removeClass("cur");
+	}).hover(function(){
+		$(this).addClass("hover");
+	},function(){
+		$(this).removeClass("hover");
+	});
+	$(document).on('click','div.muban_title p span',function(){
+		$(this).addClass("cur").siblings().removeClass("cur");
+		});
+	$("#diydomain").click(function(){
+		var domhtml = $('#htmlCode').html();
+		if(diydomain)
+		{
+			if(diydomaindesc && diywhois && diyerrow)
+			{
+				$('#cssCode').html(csshtml + '.inner1 { padding-top: 10px;padding-bottom: 10px;color: black;font-family: "Microsoft YaHei";font-size: 16px;font-weight: 400;line-height: 45px;text-decoration: none;}.inner2 {color: black;font-family: Impact;font-size: 50px; font-weight: 400; line-height: 45px;} .inner3 {margin-top: 15px;color: black; font-family: "Microsoft YaHei";font-size: 20px;font-weight: 700;line-height: 45px;}');
+			}
+			$('#htmlCode').html(domhtml + '<div class="inner2"><span>{%domain%}</span></div>');
+			diydomain = false;
+		}
+	});
+	$("#diydesc").click(function(){
+		var domddesc = $('#htmlCode').html();
+		if(diydomaindesc)
+		{
+			$('#htmlCode').html(domddesc + '<div class="inner3">简介: {%domaindesc%}</div>');
+			if(diydomain && diywhois && diyerrow)
+			{
+				$('#cssCode').html(csshtml + '.inner1 { padding-top: 10px;padding-bottom: 10px;color: black;font-family: "Microsoft YaHei";font-size: 16px;font-weight: 400;line-height: 45px;text-decoration: none;}.inner2 {color: black;font-family: Impact;font-size: 50px; font-weight: 400; line-height: 45px;} .inner3 {margin-top: 15px;color: black; font-family: "Microsoft YaHei";font-size: 20px;font-weight: 700;line-height: 45px;}');
+			}
+			diydomaindesc = false;
+		}
+	});
+	$("#diywhois").click(function(){
+		var domwhois = $('#htmlCode').html();
+		if(diywhois)
+		{
+			var whoisurl ="<?php echo \core\Config::item('whois_link_url') ?>";
+			$('#htmlCode').html(domwhois + '<a href="'+whoisurl+'" class="inner1"><span>whois查询</span></a>');
+			if(diydomaindesc && diydomaindesc && diyerrow)
+			{
+				$('#cssCode').html(csshtml + '.inner1 { padding-top: 10px;padding-bottom: 10px;color: black;font-family: "Microsoft YaHei";font-size: 16px;font-weight: 400;line-height: 45px;text-decoration: none;}.inner2 {color: black;font-family: Impact;font-size: 50px; font-weight: 400; line-height: 45px;} .inner3 {margin-top: 15px;color: black; font-family: "Microsoft YaHei";font-size: 20px;font-weight: 700;line-height: 45px;}');
+			}
+			diywhois= false;
+		}
+	});
+	$("#diyerrow").click(function(){
+		var errowhtml = $('#htmlCode').html();
+		if(diyerrow)
+		{
+			var errowurl ="<?php echo \core\Config::item('errow_link_url') ?>";
+			$('#htmlCode').html(errowhtml + '<div class="inner1"><div>如果您对该域名感兴趣，请点击<a href="'+errowurl+'">委托买卖</a>提供您的报价</div><div>If you would like to purchase this domain name,please <a href="#">click here</a> to make an offer.</div></div>');
+			if(diydomaindesc && diydomaindesc && diywhois)
+			{
+				$('#cssCode').html(csshtml + '.inner1 { padding-top: 10px;padding-bottom: 10px;color: black;font-family: "Microsoft YaHei";font-size: 16px;font-weight: 400;line-height: 45px;text-decoration: none;}.inner2 {color: black;font-family: Impact;font-size: 50px; font-weight: 400; line-height: 45px;} .inner3 {margin-top: 15px;color: black; font-family: "Microsoft YaHei";font-size: 20px;font-weight: 700;line-height: 45px;}');
+			}
+			diyerrow = false;
+		}
+	});
+})
+	function hiddencontact()
+	{
+		$('#showcard').hide();
+	}
+	function hiddenseo()
+	{
+		$('#showseo').hide();
+	}
+function showcard(type,id) {	
+	if(type == 1)
+	{
+	$.ajax({
+		type: 'post',
+		dataType:'json',
+		url: '<?php echo $this->url->get('custompage/getcontact')?>',
+		data: {
+			cid: id
+			},
+		timeout:20000,
+		success: function(data) 
+		{
+			if (data.flag ) {
+				$('#showcard').html('');
+				var addhtml = '<div class="border_gray clearfix"><div class="left"><div class="hot mt15"><label class="hot_tip">名片名称：</label><input type="text" value="'+data.cardname+'" name="cardname" id="cardname" class="w_300 hot_input" onblur="checkForm(\'cardname\')" /><em id="cardnameNotice" class="c_style_red pagenotice"></em> </div><div class="hot"><label class="hot_tip">姓名：</label><input type="text" name="username"  value="'+data.username+'" id="username" class="w_300 hot_input" onblur="checkForm(\'username\')" /><em id="usernameNotice" class="c_style_red pagenotice"></em>  </div><div class="hot"><label class="hot_tip">电话：</label><input type="text" id="phone"  value="'+data.phone+'" name="phone" class="w_300 hot_input" onblur="checkForm(\'phone\')"/> <em id="phoneNotice" class="c_style_red pagenotice"></em></div><div class="hot"><label class="hot_tip">QQ：</label><input type="text"id="qq" name="qq"  value="'+data.qq+'" class="w_300 hot_input" onblur="checkForm(\'qq\')" /> <em id="qqNotice" class="c_style_red pagenotice"></em></div>';
+				addhtml += '<div class="hot"><label class="hot_tip">邮箱：</label><input type="text" id="email"  value="'+data.email+'" name="email" class="w_300 hot_input" onblur="checkForm(\'email\')" /> <em id="emailNotice" class="c_style_red pagenotice"></em> </div>';
+				addhtml += '<div class="hot"><label class="hot_tip">简介：</label><input type="text"id="description" name="description" value="'+data.description+'" class="w_400 hot_input" /></div></div>';
+				if(data.imgurl)
+				{
+					addhtml += '<div class="right intro_right"><img src="/<?php  echo \core\Config::item('avatar_upload_path');?>'+data.imgurl+'"  width="128" height="128" id="img1" />'; 
+				}
+				else
+				{
+					addhtml += '<div class="right intro_right"><img src=""  width="128" height="128" id="img1" />'; 
+				}
+				addhtml += '<p class="mt10">形象或者二维码</p><p class="center mt10"><input type="hidden" name="uavatar" id="uavatar" value=""><input type="file" name="avatar" class="avatar" id="avatar"></p><p class="center mt20"><button class="com_search_btn" id="buttonUpload" onclick="return ajaxFileUpload();">上传</button></p></div></div><div class="center mt20 pb20"><input class="com_btn" onclick = "hiddencontact();" type="button" value="关闭" />&nbsp;&nbsp;<input class="com_btn" onclick = "editcontact('+id+');" type="button" value="保 存" /></div>'; 
+				$('#showcard').html(addhtml);
+				$('#Ucid').val(id);
+				$('#showcard').show();
+			} 
+			else  {
+				alert(data.error);
+			};
+		}
+	});
+	}
+	else
+	{
+		$('#showcard').html('');
+		var addhtml = '<div class="border_gray clearfix"><div class="left"><div class="hot mt15"><label class="hot_tip">名片名称：</label><input type="text" name="cardname" id="cardname" class="w_300 hot_input" onblur="checkForm(\'cardname\')" /> <em id="cardnameNotice" class="c_style_red pagenotice"></em></div><div class="hot"><label class="hot_tip">姓名：</label><input type="text" name="username" id="username" class="w_300 hot_input" onblur="checkForm(\'username\')" /><em id="usernameNotice" class="c_style_red pagenotice"></em>  </div><div class="hot"><label class="hot_tip">电话：</label><input type="text" id="phone" name="phone" class="w_300 hot_input" onblur="checkForm(\'phone\')" /> <em id="phoneNotice" class="c_style_red pagenotice"></em> </div><div class="hot"><label class="hot_tip">QQ：</label><input type="text"id="qq" name="qq" class="w_300 hot_input" onblur="checkForm(\'qq\')" /> <em id="qqNotice" class="c_style_red pagenotice"></em> </div>';
+		addhtml += '<div class="hot"><label class="hot_tip">邮箱：</label><input type="text" id="email" name="email" class="w_300 hot_input" onblur="checkForm(\'email\')" /> <em id="emailNotice" class="c_style_red pagenotice"></em> </div>';
+		addhtml += '<div class="hot"><label class="hot_tip">简介：</label><input type="text"id="description" name="description" class="w_400 hot_input" /> </div></div>';
+		addhtml += '<div class="right intro_right"><img src="/images/common-avatar.png" width="128" height="128" id="img1" /><p class="mt10">形象或者二维码</p><p class="center mt10"><input type="hidden" name="uavatar" id="uavatar" value=""><input type="file" name="avatar" class="avatar" id="avatar"></p><p class="center mt20"><button class="com_search_btn" id="buttonUpload" onclick="return ajaxFileUpload();">上传</button></p></div></div><div class="center mt20 pb20"><input class="com_btn" onclick = "hiddencontact();" type="button" value="关闭" />&nbsp;&nbsp;<input class="com_btn" onclick = "addcontact();" type="button" value="保 存" /></div>'; 
+		$('#showcard').html(addhtml);
+		$('#showcard').show();
+	}
+}
+ function addcontact()
+{
+	 if (trim($('#phone').val()) == '' && trim($('#email').val()) == '' && trim($('#qq').val()) == '') {
+			$alert('邮箱、QQ、电话至少填写一种');
+			$('#phone').focus();
+			return false;
+		}
+	 if(trim($('#cardname').val()) == ''){
+		  alert('名称不能为空'); 
+		  return false;
+	  }
+	 if(trim($('#username').val()) != '' && $('#username').val().length >25){
+		  alert('联系人名称应少于25字符'); 
+		  return false; 
+	  }
+	 var dess = $('#description').val();
+	  if(dess && dess.length >20){
+		  alert('名称应少于20字符'); 
+		  return false;
+	  }
+	 $.ajax({
+			type: 'post',
+			dataType:'json',
+			url: '<?php echo $this->url->get('custompage/addcontact')?>',
+			data: {
+				username: $('#username').val(),
+				qq : $('#qq').val(),
+				email:$('#email').val(),
+				phone:$('#phone').val(),
+				desc:$('#description').val(),
+				cardname:$('#cardname').val(),
+				avatar:$('#uavatar').val()
+				},
+			timeout:20000,
+			success: function(data) 
+			{
+				if (data.flag) {
+					alert(data.error);	
+					$("div.muban_card p span").siblings().removeClass("cur");				 
+					var cont= '<span class="card cur" id="'+data.lastid +' _card"><a href="javascript:void(0);" onclick="showcard(1,'+ data.lastid +');">'+  $('#cardname').val() +' </a><a class="ml20"  href="javascript:void(0);" onclick="delcard('+ data.lastid +');">X</a> </span>' ;
+					$('#contas').append(cont)
+					$('#Ucid').val(data.lastid);
+					$('#showcard').html('');
+					$('#showcard').hide();
+					return false;
+				} 
+				else {
+					alert(data.error);
+				};
+			}
+		});
+}
+ function editcontact(id)
+ {
+	 if (trim($('#phone').val()) == '' && trim($('#email').val()) == '' && trim($('#qq').val()) == '') {
+			$alert('邮箱、QQ、电话至少填写一种');
+			$('#phone').focus();
+			return false;
+		}
+	 if(trim($('#cardname').val()) == ''){
+		  alert('名称不能为空'); 
+		  return false;
+	  }
+	 if($('#cardname').val().length > 10){
+		  alert('名称应在2到10字符之间'); 
+		  return false;
+	  }
+	 if(trim($('#username').val()) != '' && $('#username').val().length >25){
+		  alert('联系人名称应少于25字符'); 
+		  return false;
+	  }
+	 var dess = $('#description').val();
+	  if(dess && dess.length >20){
+		  alert('简介应少于20字符'); 
+		  return false;
+	  }
+ 	 $.ajax({
+ 			type: 'post',
+ 			dataType:'json',
+ 			url: '<?php echo $this->url->get('custompage/editcontact')?>',
+ 			data: {
+ 	 			cid:id,
+ 				username: $('#username').val(),
+ 				qq : $('#qq').val(),
+ 				email:$('#email').val(),
+ 				phone:$('#phone').val(),
+ 				desc:$('#description').val(),
+ 				cardname:$('#cardname').val(),
+ 				avatar:$('#uavatar').val()
+ 				},
+ 			timeout:20000,
+ 			success: function(data) 
+ 			{
+ 				if (data.flag) {
+ 					alert(data.error);	
+ 					$("#"+id+"_card").remove();		 
+ 					var cont= '<span class="card cur" id="'+id+'_card"><a href="javascript:void(0);" onclick="showcard(1,'+id+');">'+  $('#cardname').val() +' </a> <a class="ml20" href="javascript:void(0);" onclick="delcard('+ id +');">X</a> </span>' ;
+ 					$('#contas').append(cont)
+ 					$('#showcard').html('');
+ 					$('#showcard').hide();
+ 					return false;
+ 				} 
+ 				else {
+ 					alert(data.error);
+ 				};
+ 			}
+ 		});
+ }
+ function delcard(id)
+ {
+	 if(confirm('确认删除该数据')) {
+ 	 $.ajax({
+ 			type: 'get',
+ 			dataType:'json',
+ 			url: '<?php echo $this->url->get('custompage/delcontact')?>',
+ 			data: {
+ 				cid: id,
+ 				},
+ 			timeout:20000,
+ 			success: function(data) 
+ 			{
+ 				if (data.flag) {
+ 					alert(data.error);
+ 					$("#"+id+"_card").remove();
+ 					if($('#Ucid').val() == id)
+ 					{
+ 						$('#Ucid').val('');
+ 					}
+ 					return false;
+ 				} 
+ 				else {
+ 					alert(data.error);
+ 				};
+ 			}
+ 		});
+	 }
+	 return false;
+ }
+ function showseo(type,id) {	
+		if(type == 1)
+		{
+		$.ajax({
+			type: 'post',
+			dataType:'json',
+			url: '<?php echo $this->url->get('custompage/getseo')?>',
+			data: {
+				sid: id
+				},
+			timeout:20000,
+			success: function(data) 
+			{
+				if (data.flag ) {
+					$('#showseo').html('');
+					var addhtml = '<div class="border_gray pb10"><div class="hot mt15"><label class="hot_tip">SEO名称：</label><input type="text" name="seoname" id="seoname" value="'+ data.CardName +'" class="w_300 hot_input" onblur="checkForm(\'seoname\')" /><em id="seonameNotice" class="c_style_red pagenotice"></em> </div><div class="hot"><label class="hot_tip">标 题：</label><input type="text" name="title" value="'+data.Title+'" id="title" class="w_200 hot_input" /> </div><div class="hot"><label class="hot_tip">关键词：</label><input type="text" name="kword" value="'+data.Keywords+'"  id="kword" class="w_400 hot_input" /> </div><div class="hot"><label class="hot_tip">描述：</label><input type="text" name="seodesc" id="seodesc" value="'+data.description+'" class="w_400 hot_input" /> </div><div class="hot" style="padding-left:150px;"><p class="hot_tishi">标题，关键词，描述可用{%domain%},{%domaindesc%}域名变量 </p></div>';
+					 addhtml += '<div class="center mt20 pb20"><input class="com_btn" onclick = "hiddenseo();" type="button" value="关闭" />&nbsp;&nbsp;<input class="com_btn" onclick = "editseo('+id+');" type="button" value="保 存" /></div>';
+					 $('#Seoid').val(id);
+					 $('#showseo').html(addhtml);
+					 $('#showseo').show();
+				} 
+				else  {
+					alert(data.error);
+				};
+			}
+		});
+		}
+		else
+		{
+			$('#showseo').html('');
+			var addhtml = '<div class="border_gray pb10"><div class="hot mt15"><label class="hot_tip">SEO名称：</label><input type="text" name="seoname" id="seoname" class="w_300 hot_input" onblur="checkForm(\'seoname\')" /><em id="seonameNotice" class="c_style_red pagenotice"></em> </div><div class="hot"><label class="hot_tip">标 题：</label><input type="text" name="title" value="" id="title" class="w_200 hot_input" /></div><div class="hot"><label class="hot_tip">关键词：</label><input type="text" name="kword" id="kword" class="w_400 hot_input" /> </div><div class="hot"><label class="hot_tip">描述：</label><input type="text" name="seodesc" id="seodesc" value="" class="w_400 hot_input" /> </div><div class="hot" style="padding-left:150px;"><p class="hot_tishi">标题，关键词，描述可用{%domain%},{%domaindesc%}域名变量 </p></div>';
+			 addhtml += '<div class="center mt20 pb20"><input class="com_btn" onclick = "hiddenseo();" type="button" value="关闭" />&nbsp;&nbsp;<input class="com_btn" onclick = "addseo();" type="button" value="保 存" /></div>'; 
+			$('#showseo').html(addhtml);
+			$('#showseo').show();
+		}
+	}
+	 function addseo()
+	{
+		 if(trim($('#seoname').val()) == ''){
+			  alert('名称不能为空'); 
+			  return false;
+		  }
+		 if($('#seoname').val().length > 10){
+			  alert('名称应在2到10字符之间'); 
+			  return false;
+		  }
+		 $.ajax({
+				type: 'post',
+				dataType:'json',
+				url: '<?php echo $this->url->get('custompage/addseo')?>',
+				data: {
+					seoname:$('#seoname').val(),
+	 				title: $('#title').val(),
+	 				kword : $('#kword').val(),
+	 				desc:$('#seodesc').val()
+					},
+				timeout:20000,
+				success: function(data) 
+				{
+					if (data.flag) {
+						alert(data.error);	
+						$("div.muban_seo p span").siblings().removeClass("cur");				 
+						var cont= '<span class="card cur" id="'+data.lastid +' _seo"><a href="javascript:void(0);" onclick="showseo(1,'+ data.lastid +');">'+  $('#seoname').val() +' </a><a class="ml20"  href="javascript:void(0);" onclick="delseo('+ data.lastid +');">X</a> </span>' ;
+						$('#seos').append(cont)
+						$('#Seoid').val(data.lastid);
+						$('#showseo').html('');
+						$('#showseo').hide();
+						return false;
+					} 
+					else {
+						alert(data.error);
+					};
+				}
+			});
+	}
+	 function editseo(id)
+	 {
+		 if(trim($('#seoname').val()) == ''){
+			  alert('名称不能为空'); 
+			  return false;
+		  }
+		 if($('#seoname').val().length > 10){
+			  alert('名称应在2到10字符之间'); 
+			  return false;
+		  }
+	 	 $.ajax({
+	 			type: 'post',
+	 			dataType:'json',
+	 			url: '<?php echo $this->url->get('custompage/editseo')?>',
+	 			data: {
+	 	 			sid:id,
+	 	 			seoname:$('#seoname').val(),
+	 				title: $('#title').val(),
+	 				kword : $('#kword').val(),
+	 				desc:$('#seodesc').val()
+	 				},
+	 			timeout:20000,
+	 			success: function(data) 
+	 			{
+	 				if (data.flag) {
+	 					alert(data.error);	
+	 					$("#"+id+"_seo").remove();		 
+	 					var cont= '<span class="card cur" id="'+id+'_seo"><a href="javascript:void(0);" onclick="showseo(1,'+id+');">'+  $('#seoname').val() +' </a> <a class="ml20" href="javascript:void(0);" onclick="delseo('+ id +');">X</a> </span>' ;
+	 					$('#seos').append(cont)
+	 					$('#showseo').html('');
+	 					$('#showseo').hide();
+	 					return false;
+	 				} 
+	 				else {
+	 					alert(data.error);
+	 				};
+	 			}
+	 		});
+	 }
+	 function delseo(id)
+	 {
+		 if(confirm('确认删除该数据')) {
+	 	 $.ajax({
+	 			type: 'get',
+	 			dataType:'json',
+	 			url: '<?php echo $this->url->get('custompage/delseo')?>',
+	 			data: {
+	 				sid: id,
+	 				},
+	 			timeout:20000,
+	 			success: function(data) 
+	 			{
+	 				if (data.flag) {
+	 					alert(data.error);
+	 					$("#"+id+"_seo").remove();
+	 					if($('#Seoid').val() == id)
+	 					{
+	 						$('#Seoid').val('');
+	 					}
+	 					return false;
+	 				} 
+	 				else {
+	 					alert(data.error);
+	 				};
+	 			}
+	 		});
+		 }
+		 return false;
+	 }
+ function ajaxFileUpload (){	 
+	 $.ajaxFileUpload ({
+	 url :'<?php echo $this->url->get('custompage/upload')?>',
+	 secureuri :false,
+	 fileElementId :'avatar',
+	 dataType : 'json',
+	 success : function (data,status){
+	 if(typeof(data.flag) != 'undefined'){
+		 if(data.flag)
+		 {
+			 var prep = '<?php echo \core\Config::item('avatar_upload_path');?>';
+			 $("#img1").attr("src", '/'+ prep + data.apath);
+			 $('#uavatar').val(data.apath);
+		}
+	
+	 	alert(data.error);
+	 }
+	 },
+	 error: function (data,status,e){
+	 	alert(data.error);
+	 }
+	 })
+	 return false;
+	 }
+
+ function addtemplate(obj) {
+		var post_url = '';
+		var oBtn = obj;
+		if (trim($('#templateName').val()) == '') {
+			alert('请输入模板名称');
+			$('#templateName').focus();
+			return false;
+		}
+		<?php if($html['info']['TemplateType']==1):?>	
+		if (trim($('#Ucid').val()) == '') {
+			alert('请选择联系人名片');
+			return false;
+		}	
+		if (trim($('#Seoid').val()) == '') {
+			alert('请选择SEO');
+			return false;
+		}
+		<?php endif;?>
+		var numreg = /^[0-9]*$/;
+		 var madwidth = trim($('#adwidth').val());
+		  var madheight = trim($('#adheight').val());
+		  var mslotid = trim($('#slotid').val());
+		  var mpubid = trim($('#pubid').val());
+		  if(trim($('#adId').val()) !='')
+		  {
+			  if(!$('input:radio[name="adType"]:checked').val())
+			  {
+				  $('#adIdNotice').html('请先选择广告商');
+				  $('#adIdNotice').focus();
+					return false;
+			  }else if($('input:radio[name="adType"]:checked').val() != 2)
+			  {
+				  $('#adIdNotice').html('请先选择正确的广告商');
+				  $('#adIdNotice').focus();
+					return false;
+				 }
+			  else if(!numreg.test(trim($('#adId').val()))){
+				  $('#adIdNotice').html('只填写广告代码中的数字id');
+			     $('#adIdNotice').focus();
+				  return false;
+			  }else{
+				  $('#adIdNotice').html('');
+			  }
+		  }
+		  else{
+			  $('#adIdNotice').html('');
+		  }
+		  if( mpubid !='' || mslotid !=''|| madheight !=''|| madwidth !='')
+		  {
+			  if(!$('input:radio[name="adType"]:checked').val())
+			  {
+				  $('#adIdNotice').html('请先选择广告商');
+				  $('#adIdNotice').focus();
+					return false;
+			  }else if($('input:radio[name="adType"]:checked').val() != 1)
+			  {
+				  $('#adIdNotice').html('请先选择正确的广告商');
+				  $('#adIdNotice').focus();
+					return false;
+				 }
+			else{
+				  $('#adIdNotice').html('');
+			  }
+			  }
+		  if(mpubid !='')
+		  {
+			  if(mpubid.length <2 || mpubid.length >100)
+			  {
+				  alert('请输入正确的ad_client信息'); 
+				return false;
+			  }
+		  }
+		  if(mslotid !='')
+		  {
+			  if(mslotid.length <2 || mslotid.length >100)
+			  {
+				  alert('请输入正确的ad_slot信息'); 
+					return false;
+			  }
+		  }
+		  if(madwidth !='' && !numreg.test(madwidth))
+		  {
+				  alert('width、height只能是数字');
+					return false;
+		  }
+<?php if($html['info']['TemplateType']!=1):?>
+	if (trim($('#htmlCode').val()) == '') {
+		$('#htmlNotice').html('请输入模板代码');
+		$('#htmlCode').focus();
+		return false;
+	}
+	else
+	{
+		$('#htmlNotice').html('');
+	}
+	<?php endif;?>
+
+	<?php if(in_array($html['info']['TemplateType'], array(2, 3))):?>
+	var html = $('#htmlCode').val();
+	var css = $('#cssCode').val();
+	var jsreg = /<script[^>]*>(?:.|[\r\n])*<\/script>/;
+	if(jsreg.test(html))
+	{
+		$('#htmlNotice').html('html中不能有js代码');
+		$('#htmlCode').focus();
+		return false;
+	}
+	else
+	{
+		$('#htmlNotice').html('');
+	}	
+		if(jsreg.test(css))
+		{
+			$('#cssNotice').html('css中不能有js代码');
+			$('#cssCode').focus();
+			return false;
+		}
+		else
+		{
+			$('#cssNotice').html('');
+		}
+		<?php endif;?>
+		<?php if($html['info']['TemplateType']!=1):?>
+		var htmlCode = $('#htmlCode').val();
+		<?php endif;?>
+		$.ajax({
+			type: 'post',
+			dataType:'json',
+			url: '<?php echo $this->url->get('custompage/dosettemplate')?>',
+			data: {
+	         ename_csrf: '9cf170e574320923b74e853281c04870',
+				templateName: $('#templateName').val(),
+				ucid: $('#Ucid').val(),
+				seoid: $('#Seoid').val(),
+				statType: $('#statType').val(),
+				statId: $('#statId').val(),
+				adType: $('input:radio[name="adType"]:checked').val() ,
+				adId: $('#adId').val(),
+				pubid: $('#pubid').val(),
+				slotid: $('#slotid').val(),
+				adwidth: $('#adwidth').val(),
+				enameType: $('#enameType').val(),
+				enameCode: $('#enameCode').val(),
+				adheight: $('#adheight').val(),
+				type: $('#typeid').val(),
+				templateId: $('#templateid').val(),
+				dataid: $('#dataid').val(),
+				<?php if($html['info']['TemplateType']==1):?>
+				templateId: <?php echo $html['info']['TemplateDId']?>
+				<?php else:?>
+				htmlCode: htmlCode,
+				cssCode: $('#cssCode').val(),
+				<?php endif;?>					
+				},
+			timeout:20000,
+			success: function(data) 
+			{
+				if (data['result']==false) {
+					alert(data['msg']);
+					return false;
+				} 
+				else if (data['result']==true) {
+					alert(data['msg']);
+						parent.location.href = '<?php echo $this->url->get('custompage/templatelist')?>';
+				}
+			}
+		});
+
+	}
+ $('.intro_textarea').bind({ 
+		focus:function(){ 
+			if (this.value == this.defaultValue){ 
+				this.value="";
+			} 
+		}, 
+		blur:function(){ 
+			if (this.value == ""){ 
+				this.value = this.defaultValue; 
+			} 
+		} 
+	}); 
+ function checkForm(type)
+ {
+ 	  var emailreg = /^([a-zA-Z0-9]+[_|\-|\.]?)*[a-zA-Z0-9]+@([a-zA-Z0-9]+[_|\-|\.]?)*[a-zA-Z0-9]+\.[a-zA-Z]{2,4}$/;
+ 	  var qqreg = /^[1-9]\d{4,19}$/;
+ 	  var phonereg = /^([0-9]{10,16})?$/;
+ 	  var numreg = /^[0-9]*$/;
+ 	  var jsreg = /<script[^>]*>(?:.|[\r\n])*<\/script>/;
+ 	  var temName = trim($('#templateName').val());
+ 	  var seoName = trim($('#seoname').val());
+ 	  var cardName = trim($('#cardname').val());
+ 	  var userName = trim($('#username').val());
+ 	  var email = trim($('#email').val());
+ 	  var qq = trim($('#qq').val());
+ 	  var phone = trim($('#phone').val());
+ 	  var statId = trim($('#statId').val());
+ 	  var adId = trim($('#adId').val());
+ 	  var adwidth = trim($('#adwidth').val());
+ 	  var adheight = trim($('#adheight').val());
+ 	 var slotid = trim($('#slotid').val());
+	  var pubid = trim($('#pubid').val());
+ 	  var adType = $('input:radio[name="adType"]:checked').val();
+ 	  var statType = $('#statType').val();
+ 	  var enameType = $('#enameType').val();
+ 	  var enamecode= trim($('#enameCode').val());
+
+ 	  <?php if(in_array($html['info']['TemplateType'], array(2, 3))):?>
+ 	  var html = trim($('#htmlCode').val());
+ 	  var css = trim($('#cssCode').val());
+ 	  <?php endif;?>
+
+ 	  switch(type)
+ 	  {
+ 	  case 'temName':
+ 		  if(temName =='')
+ 			  $('#temNameNotice').html('请输入模板名称'); 
+ 		  else if(temName.length <2 || temName.length >40)
+ 			  $('#temNameNotice').html('模板名称应在2到40字符之间'); 
+ 		  else
+ 			  $('#temNameNotice').html(''); 
+ 		  break;
+ 	  case 'email':
+ 		  if(phone == '')
+ 			  $('#phoneNotice').html('');
+ 		  if(email !='' && !emailreg.test(email))
+ 			  $('#emailNotice').html('邮箱格式错误'); 
+ 		  else
+ 			  $('#emailNotice').html('');
+ 			 
+ 		  break;
+ 	  case 'qq':
+ 		  if(phone == '')
+ 			  $('#phoneNotice').html('');
+ 		  if(qq !='' && !qqreg.test(qq))
+ 			  $('#qqNotice').html('QQ格式错误');
+ 		  else
+ 			  $('#qqNotice').html('');
+ 		  break;
+ 	  case 'phone':
+ 		  if(phone !='' && !phonereg.test(phone))
+ 			  $('#phoneNotice').html('电话格式');
+ 		  else
+ 			  $('#phoneNotice').html('');
+ 		  break;
+ 	  case 'statId':
+ 		  if(statId !='')
+ 		  {
+ 			  if(statType ==0)
+ 				  $('#statIdNotice').html('请选择类型');
+ 			  else if(!numreg.test(statId))
+ 				  $('#statIdNotice').html('格式有误');
+ 			  else
+ 				  $('#statIdNotice').html('');  
+ 		  }		
+ 		  else
+ 			  $('#statIdNotice').html('');  
+ 		  break;
+ 	 case 'enameCode':
+ 		if(enamecode !='')
+		  {
+			  if(enameType ==0)
+				  $('#enameNotice').html('请选择类型');
+			  else
+				  $('#enameNotice').html('');  
+		  }		
+		  else
+			  $('#enameNotice').html('');  
+		  if(enameType == 2)
+		  {
+			  $('#enameNotice').html('JS代码格式的请输入ID，例：ename_ad_solt:5中的5');  
+		  }
+		  if(enameType == 1)
+		  {
+			  $('#enameNotice').html('例：http://www.ename.com.cn/advert/click?c=hp');  
+		  }
+		  break;
+ 	  case 'adId':
+ 		  if(adId !='')
+ 		  {
+ 			  if(!adType)
+ 				  $('#adIdNotice').html('请先选择广告商');
+ 			  else if(!numreg.test(adId))
+ 				  $('#adIdNotice').html('只填写广告代码中的数字id');
+ 			  else
+ 				  $('#adIdNotice').html('');
+ 		  }
+ 		  else{
+ 			  $('#adIdNotice').html('');
+ 		  }
+ 		  break;
+ 	 case 'pubid':
+	 		 if(pubid !='' && (pubid.length <2 || pubid.length >100))
+				  $('#pubidNotice').html('请输入正确信息'); 
+			  else
+				  $('#pubidNotice').html(''); 
+			  break;
+	 	case 'slotid':
+	 		 if(slotid !='' && (slotid.length <2 || slotid.length >100))
+			  $('#slotidNotice').html('请输入正确信息'); 
+		  else
+			  $('#slotidNotice').html(''); 
+		  break;
+ 	  case 'html':
+ 		  if(html !='' && jsreg.test(html))
+ 				$('#htmlNotice').html('html中不能有js代码');
+ 			else
+ 				$('#htmlNotice').html('');
+ 			break;
+ 	  case 'css':	
+ 			if(css !='' && jsreg.test(css))
+ 				$('#cssNotice').html('css中不能有js代码');
+ 			else
+ 				$('#cssNotice').html('');
+ 			break;
+ 	  case 'cardname':
+ 		 if(cardName =='')
+			  $('#cardnameNotice').html('请输入名称'); 
+		  else if(cardName.length <2 || cardName.length >10)
+			  $('#cardnameNotice').html('名称应在2到10字符之间'); 
+		  else
+			  $('#cardnameNotice').html(''); 
+		  break;
+ 	 	case 'seoname':
+ 		 if(seoName =='')
+			  $('#seonameNotice').html('请输入名称'); 
+		  else if(seoName.length <2 || seoName.length >10)
+			  $('#seonameNotice').html('名称应在2到10字符之间'); 
+		  else
+			  $('#seonameNotice').html(''); 
+		  break;
+ 	 	case 'username':
+ 	 		 if(userName =='')
+ 				  $('#usernameNotice').html('请输入名称'); 
+ 			  else if(userName.length <2 || userName.length >25)
+ 				  $('#usernameNotice').html('联系人名称应在2到25字符之间'); 
+ 			  else
+ 				  $('#usernameNotice').html(''); 
+ 			  break;
+ 	  }	  
+
+ 	  if(type == 'adwidth' || type =='adheight')
+ 	  {
+ 		  if(adwidth !='' && !numreg.test(adwidth))
+ 			  $('#adwidthNotice').html('width、height只能是数字');
+ 		  else  if(adheight !='' && !numreg.test(adheight))
+ 			  $('#adheightNotice').html('width、height只能是数字');
+ 			  else
+ 				  $('#adheightNotice').html('');
+ 	  }
+ }
+
+ //删除左右两端的空格
+ function trim(str) 
+ {
+	 return (str + '').replace(/(\s+)$/g, '').replace(/^\s+/g, '');
+ }
+ //清除错误信息
+ function pagereset()
+ {
+ 	$(".pagenotice").html('');
+ 	return true;
+ }
+ function statcode(val)
+ {
+	 <?php if($html['info']['TemplateType']!=1):?>
+	 if(val != 0)
+	 {
+		 if(statflag)
+		 {
+			 var stathtml = $('#htmlCode').html();
+			 $('#htmlCode').html(stathtml + '{%codestat%}');
+			 statflag = false;
+		 }
+	}
+	 <?php endif;?>
+ 	if(val ==0)
+ 		$('#statId').val('');
+ 	$('#statNotice').html('');
+ 	checkForm('statId');
+ }
+ 
+ function enamestat(val)
+ {
+	 <?php if($html['info']['TemplateType']!=1):?>
+	 if(val != 0)
+	 {
+		 if(enameflag)
+		 {
+			 var enamehtml = $('#htmlCode').html();
+			 $('#htmlCode').html(enamehtml + '{%enamecode%}');
+			 enameflag = false;
+		 }
+	}
+	 <?php endif;?>
+ 	if(val ==0)
+ 		$('#enameCode').val('');
+ 	$('#enameNotice').html('');
+ 	checkForm('enameCode');
+ }
+ function adstat(val)
+ {
+	 <?php if($html['info']['TemplateType']!=1):?>
+	 if(adflag)
+	 {
+		 var adhtml = $('#htmlCode').html();
+		 $('#htmlCode').html(adhtml + '{%codead%}');
+		 adflag = false;
+	 }
+	 <?php endif;?>
+}
+ function modelview() 
+ {
+	 var numreg = /^[0-9]*$/;
+	  var madwidth = trim($('#adwidth').val());
+	  var madheight = trim($('#adheight').val());
+	  var mslotid = trim($('#slotid').val());
+	  var mpubid = trim($('#pubid').val());
+	  if(trim($('#adId').val()) !='')
+	  {
+		  if(!$('input:radio[name="adType"]:checked').val())
+		  {
+			  $('#adIdNotice').html('请先选择广告商');
+			  $('#adIdNotice').focus();
+				return false;
+		  }else if($('input:radio[name="adType"]:checked').val() != 2)
+		  {
+			  $('#adIdNotice').html('请先选择正确的广告商');
+			  $('#adIdNotice').focus();
+				return false;
+			 }
+		  else if(!numreg.test(trim($('#adId').val()))){
+			  $('#adIdNotice').html('只填写广告代码中的数字id');
+		     $('#adIdNotice').focus();
+			  return false;
+		  }else{
+			  $('#adIdNotice').html('');
+		  }
+	  }
+	  else{
+		  $('#adIdNotice').html('');
+	  }
+	  if( mpubid !='' || mslotid !=''|| madheight !=''|| madwidth !='')
+	  {
+		  if(!$('input:radio[name="adType"]:checked').val())
+		  {
+			  $('#adIdNotice').html('请先选择广告商');
+			  $('#adIdNotice').focus();
+				return false;
+		  }else if($('input:radio[name="adType"]:checked').val() != 1)
+		  {
+			  $('#adIdNotice').html('请先选择正确的广告商');
+			  $('#adIdNotice').focus();
+				return false;
+			 }
+		else{
+			  $('#adIdNotice').html('');
+		  }
+		  }
+	  if(mpubid !='')
+	  {
+		  if(mpubid.length <2 || mpubid.length >100)
+		  {
+			  alert('请输入正确的ad_client信息'); 
+			return false;
+		  }
+	  }
+	  if(mslotid !='')
+	  {
+		  if(mslotid.length <2 || mslotid.length >100)
+		  {
+			  alert('请输入正确的ad_slot信息'); 
+			return false;
+		  }
+	  }
+	  if(madwidth !='' && !numreg.test(madwidth))
+	  {
+			  alert('width、height只能是数字');
+				return false;
+	  }
+		<?php if($html['info']['TemplateType']==1):?>
+		if (trim($('#Ucid').val()) == '') {
+			alert('请选择联系人名片');
+			return false;
+		}	
+		if (trim($('#Seoid').val()) == '') {
+			alert('请选择SEO');
+			return false;
+		}
+		<?php endif;?>
+<?php if($html['info']['TemplateType']!=1):?>
+	if (trim($('#htmlCode').val()) == '') {
+		$('#htmlNotice').html('请输入模板代码');
+		$('#htmlCode').focus();
+		return false;
+	}
+	else
+	{
+		$('#htmlNotice').html('');
+	}
+	<?php endif;?>
+	<?php if($html['info']['TemplateType']!=1):?>
+	var html = $('#htmlCode').val();
+	var css = $('#cssCode').val();
+	var jsreg = /<script[^>]*>(?:.|[\r\n])*<\/script>/;
+	if(jsreg.test(html))
+	{
+		$('#htmlNotice').html('html中不能有js代码');
+		$('#htmlCode').focus();
+		return false;
+	}
+	else
+	{
+		$('#htmlNotice').html('');
+	}
+
+		if(jsreg.test(css))
+		{
+			$('#cssNotice').html('css中不能有js代码');
+			$('#cssCode').focus();
+			return false;
+		}
+		else
+		{
+			$('#cssNotice').html('');
+		}
+		<?php endif;?>
+		$('#form1').attr('target','_blank');
+			$('#form1').attr('action',"<?php echo $this->url->get('custompage/modelview');?>");
+			$('#form1').submit();
+		
+	}
+</script>
+ 	  <script>
+					var lefturl='<?php echo $this->url->get('custompage/index');?>';
+					var url='<?php echo $this->url->get('custompage/settemplate');?>';
+				navLight(url,lefturl,lefturl);
+</script>
+<?php $this->partial("common/footer"); ?>

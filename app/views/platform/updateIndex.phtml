@@ -1,0 +1,223 @@
+<?php $this->partial("common/header"); ?>	
+<script src="/js/form.js"></script>
+<script type="text/javascript" src="/js/layer/layer.min.js"></script>
+		<link rel="stylesheet" type="text/css" href="/js/layer/skin/layer.css">
+		<div class="main_box">
+<?php $this->partial("common/headernav"); ?>
+			<div class="right main">
+				<div class="com_tab_box clearfix">
+					<ul class="left">
+						<li class="active"><a href="<?php echo $this->url->get('Platform/siteList');?>">自有网站</a></li>
+						<li>|<a href="<?php echo $this->url->get('Platform/otherList');?>">其他平台</a></li>
+					</ul>
+					</div>
+									<div class="container">
+					<form action='<?php echo $this->url->get('Platform/updateSiteInfo');?>' id='addSite' method='post'>
+					<div class="mt20 pb20 border_gray">
+						<table class="form_table clearfix mt20" width="50%">
+							<colgroup>
+								<col width="20%"/>
+								<col />
+							</colgroup>
+							<tbody>
+								<tr>
+									<td>网站名称：</td>
+									<td><input name='siteName' type="text" value="<?php echo $data->Name;?>" onblur="check_site_name(this.value)" onfocus="if(this.value == '如：域名联盟'){ this.value = '';this.style.color='#737e73';}"/></td>
+								</tr>
+								<tr>
+									<td>网站域名：</td>
+									<td><input name='site' type="text" value="<?php echo rawurldecode($data->Url); ?>" onblur="addUrl(this.value);"/> </td>
+								</tr>
+								<tr>
+									<td>网站类型：</td>
+									<td><select class="siteType" name='siteType'>
+											<option value=''>请选择网站类型</option>
+											<?php foreach ($siteType as $key=>$val){
+												echo "<option value=$key ";
+												if($data->ClassType==$key){
+													echo 'selected = "selected"';
+												}
+	                              echo " >$val</option>";
+											}?>
+										</select> 
+									</td>
+								</tr>
+								<tr>
+									<td>网站描述：</td>
+									<td rowspan="3"><textarea name='decr' "><?php echo $data->Description;?></textarea> </td>
+								</tr>
+								<tr>
+									<td></td>
+								</tr>
+								<tr>
+									<td></td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+					<div class="center mt20">
+					<input type="hidden" value="<?php echo $this->request->getQuery('PlatformId');?>" name="PlatformId">
+						<input class="com_search_btn search_btn submit_btn" type="button" value="完 成"  onclick='check_form();'/>
+						<input class="com_search_btn ml10 submit_btn" type="button" value="重 置"  onclick="searchFormReset(this.form);"/>
+					</div>
+					</form>
+																										<div class="com_note mt20 clearfix">
+	                    <h3 class="com_note_tit">注意事项：</h3>
+	                    <ul class="com_note_list mt15">
+	                        <li>推广渠道仅用于统计，各站点的推广代码并无区分，也不以此判定推广结果。</li>
+	                        <li>只要买家通过米客的推广链接进入购买，米客都可以获得佣金。</li>
+	                    </ul>
+	                </div>
+				</div>
+			</div>
+		</div>
+	<script>
+	function check_site_name(name){
+		if(name =='') {$('input[name="siteName"]').val('如：域名联盟');}
+		var url='<?php echo $this->url->get('Platform/checkName');?>';
+		$.post(url,{'Name':name},function(data,status){
+            if (data.status==1) {
+                alert('已添加过该名字');
+                $('input[name="siteName"]').val('');
+            }
+			})
+		}
+	function check_form(){
+		var site_name=$('input[name="siteName"]').val();
+		var site=$('input[name="site"]').val();
+		var siteType=$('.siteType').val();
+		if(!site_name||site_name=='如：域名联盟'){
+alert('请填写网站名称!')
+return false;
+			}
+	  if(!site||site=='http://'){
+		  alert('请填写网站域名!')
+		  return false;
+		  }
+	  var flag=false;
+	  flag=CheckUrl(site);
+	  if(!flag){
+		  alert('域名格式错误,请填写完整的域名(包含http开头)!')
+		  return false;
+		  }
+		if(siteType==''||siteType==undefined||siteType==null){
+			alert('请选择网站类型!')
+			return false;
+						}
+		$('#addSite').submit();
+
+		}
+
+	function CheckUrl(str) {
+		var strRegex = '^((https|http|ftp|rtsp|mms)?://)'
+			 '?(([0-9a-z_!~*\'().&=+$%-]+: )?[0-9a-z_!~*\'().&=+$%-]+@)?' //ftp的user@
+			 '(([0-9]{1,3}.){3}[0-9]{1,3}' // IP形式的URL- 199.194.52.184
+			 '|' // 允许IP和DOMAIN（域名）
+			 '([0-9a-z_!~*\'()-]+.)*' // 域名- www.
+			 '([0-9a-z][0-9a-z-]{0,61})?[0-9a-z].' // 二级域名
+			 '[a-z]{2,6})' // first level domain- .com or .museum
+			 '(:[0-9]{1,4})?' // 端口- :80
+			 '((/?)|' // a slash isn't required if there is no file name
+			 '(/[0-9a-z_!~*\'().;?:@&=+$,%#-]+)+/?)$';
+			var re=new RegExp(strRegex);
+			//re.test()
+			if (re.test(str)) {
+			return (true);
+			} else {
+			return (false);
+			} 
+	} 
+	function addUrl(url){
+		var strRegex = '^((https|http|ftp|rtsp|mms)?://)';
+		var re=new RegExp(strRegex);
+		if(!re.test(url)){
+			$('input[name="site"]').val('http://'+url);
+			}
+		}
+$(function(){
+	$('.ids').attr('checked',false);
+	//twitter bootstrap script
+	 $(".ids").click(function(){
+			var option = $(".ids");
+			$(this).is(':checked')?$(this).attr("checked", true):$(this).attr("checked", false);
+			option.each(function(i){
+				if(!this.checked){
+					$(".checkall").prop("checked", false);
+					return false;
+				}else{
+					$(".checkall").prop("checked", true);
+				}
+			});
+	 });
+	 $('.checkall').click(function(){
+		 $(".ids").prop("checked", this.checked);
+	 });
+	 $('.ajax-get').click(function(){
+	    if(!confirm('确认要删除吗?')){
+	        return false;
+	    }
+	    target = $(this).attr('url');
+	    if(target){
+	        $.get(target).success(function(data){
+	            if (data.status==1) {
+	            	alert('删除成功');
+	                setTimeout(function(){
+	                        location.reload();
+	                },500);
+	            }
+	            else{
+	            	alert('删除失败');
+	            }
+	        });
+	        }
+	 });
+})
+	function deleteSite(){
+		var PlatformId=getId();
+		if(PlatformId==''||PlatformId==undefined||PlatformId==null){
+
+alert('请选择！');
+return false;
+			}
+        if(!confirm('确认要删除吗?')){
+            return false;
+        }
+        $.ajax({
+            type: "POST",
+        url: "<?php echo $this->url->get('Platform/deletePlatform');?>",
+        data: {'PlatformId':PlatformId},
+        beforeSend : function(){
+       },
+                success: function(data){
+                     if(data.status==1){
+                       alert('删除成功');
+                       setTimeout(function(){
+                               location.reload();
+                       },500);
+                        }
+                     else{
+                    	 alert('删除失败');
+                         }        
+                },
+        error: function(){
+        alert("系统繁忙");
+        }
+              });
+		}
+	 function getId(){
+	     var PlatformId=[];  
+	     $('.ids').each(function(i) {
+	         if ($(this).is(':checked')) { 
+	        	 PlatformId[i]= $(this).val();  
+	         }
+	     }); 
+	     return PlatformId;
+		 }
+	</script>
+		</script>
+		<script>
+		var top_url='<?php echo $this->url->get('Agentguests/domainAgent');?>';
+		var base_url='<?php echo $this->url->get('Platform/siteList');?>';
+	navLight(base_url,base_url,top_url);
+</script>
+<?php $this->partial("common/footer"); ?>

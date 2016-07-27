@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>域名分销</title>
+<meta name="keywords" content="">
+<meta name="description" content="">
+<script type="text/javascript" src="/js/jquery-1.11.3.min.js"></script>
+<link rel="stylesheet" type="text/css" href="/css/public.css">
+<link rel="stylesheet" href="/css/ydao.css" />
+<!--[if IE 6]>
+<script type="text/javascript" src="js/DD_belatedPNG.js" ></script>
+<script type="text/javascript">
+DD_belatedPNG.fix('.closebtn');
+</script>
+<![endif]-->
+</head>
+<body>
+
+<div class="mask_box">
+		<div class="lead_box">
+				<ul class="lead_ul clearfix">
+						<li class="active"><img src="/images/guide1.jpg"><a href="#" class="g_next g_next1"></a></li>
+						<li><img src="/images/guide14.jpg"><a href="javascript:void(0);" class="g_next g_next14"></a></li>
+						<li><img src="/images/guide15.jpg"><a href="javascript:void(0);" class="g_next g_next15"></a></li>
+						<li><img src="/images/guide16.jpg"><a href="javascript:void(0);" class="g_next g_next16"></a></li>
+						<li><img src="/images/guide17.jpg"><a href="javascript:void(0);" class="g_next g_next17"></a></li>
+						<li><img src="/images/guide18.jpg"><a href="<?php echo $this->url->get('agentguests/domainagent');?>"  class="g_next g_next18"></a></li>
+						</ul>
+						<a href="<?php echo $this->url->get('agentguests/domainagent');?>" class="closebtn"></a>
+						</div>
+						</div>
+
+						<script type="text/javascript">
+						$(function(){
+						$(".g_next").click(function(){
+						$(this).parent().removeClass('active').next().addClass('active');
+})
+})
+</script>
+</body>
+</html>
